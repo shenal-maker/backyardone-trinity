@@ -1381,82 +1381,68 @@
 
         /* ===== Trinity Graph View ===== */
         /* Dark theme (default) */
+        /* ── Google-clean theme (always light) ── */
         .trinity-view {
-            --tv-bg:         #0d0d0d;
-            --tv-panel:      #141414;
-            --tv-border:     #2a2a2a;
-            --tv-border2:    #2a2a3a;
-            --tv-text:       #ccccdd;
-            --tv-text-head:  #e8e8f0;
-            --tv-text-muted: #555566;
-            --tv-text-sec:   #888899;
-            --tv-btn-bg:     #1a1a2a;
-            --tv-btn-hover:  #252535;
-            --tv-hint:       #333344;
-            --tv-node-who:   #4a9eff;
-            --tv-node-what:  #4ecb71;
-            --tv-node-whatif:#f5a623;
+            --tv-bg:         #f8f9fa;
+            --tv-panel:      #ffffff;
+            --tv-border:     #e8eaed;
+            --tv-border2:    #dadce0;
+            --tv-text:       #202124;
+            --tv-text-head:  #202124;
+            --tv-text-muted: #9aa0a6;
+            --tv-text-sec:   #5f6368;
+            --tv-btn-bg:     #f1f3f4;
+            --tv-btn-hover:  #e8eaed;
+            --tv-hint:       #9aa0a6;
+            --tv-node-who:   #4a7fb5;
+            --tv-node-what:  #34a853;
+            --tv-node-whatif:#f9ab00;
             --tv-node-sit:   #9b59b6;
-            --tv-node-com:   #e74c3c;
+            --tv-node-com:   #ea4335;
+            --tv-blue:       #1a73e8;
         }
-        /* Light theme overrides */
-        .trinity-view.light-theme {
-            --tv-bg:         #f5f0ea;
-            --tv-panel:      #faf7f3;
-            --tv-border:     #ddd5cb;
-            --tv-border2:    #d5cdc3;
-            --tv-text:       #3a3228;
-            --tv-text-head:  #1e1a16;
-            --tv-text-muted: #9a8f85;
-            --tv-text-sec:   #6a6058;
-            --tv-btn-bg:     #ede8e2;
-            --tv-btn-hover:  #e2dcd6;
-            --tv-hint:       #c8c0b8;
-            --tv-node-who:   #6a9ed0;
-            --tv-node-what:  #5aaa78;
-            --tv-node-whatif:#d8962a;
-            --tv-node-sit:   #9868c0;
-            --tv-node-com:   #cc7068;
-        }
+        .trinity-view.light-theme { /* same as above, kept for JS compat */ }
 
-        .trinity-view { display:none; position:fixed; inset:0; background:var(--tv-bg); overflow:hidden; z-index:50; }
+        .trinity-view { display:none; position:fixed; inset:0; background:var(--tv-bg); overflow:hidden; z-index:50; font-family:'Inter',sans-serif; }
         .trinity-view.active { display:flex; flex-direction:row; }
-        .view-tab[data-view="trinity"].active { border-bottom-color:#7c5cbf; }
 
-        /* Legend sidebar */
-        .trinity-legend { width:168px; min-width:168px; background:var(--tv-panel); border-right:1px solid var(--tv-border); padding:16px 12px; display:flex; flex-direction:column; gap:6px; overflow-y:auto; z-index:5; }
-        .tl-title { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:var(--tv-text-muted); margin-bottom:4px; }
-        .tl-item { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--tv-text-sec); }
+        /* Sidebar */
+        .trinity-legend { width:180px; min-width:180px; background:var(--tv-panel); border-right:1px solid var(--tv-border); padding:20px 16px; display:flex; flex-direction:column; gap:8px; overflow-y:auto; z-index:5; box-shadow:1px 0 3px rgba(0,0,0,.06); }
+        .tl-logo { font-size:13px; font-weight:700; color:var(--tv-text); letter-spacing:-.3px; margin-bottom:4px; }
+        .tl-title { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.08em; color:var(--tv-text-muted); margin-top:4px; margin-bottom:2px; }
+        .tl-item { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--tv-text-sec); padding:3px 0; }
         .tl-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
-        .tl-divider { height:1px; background:var(--tv-border); margin:4px 0; }
+        .tl-divider { height:1px; background:var(--tv-border); margin:6px 0; }
+        .tl-hint { font-size:10px; color:var(--tv-hint); line-height:1.7; margin-top:auto; padding-top:12px; }
+        .trinity-legend .btn { background:#1a73e8; border:none; color:#fff; font-size:12px; font-weight:500; border-radius:6px; padding:9px 12px; cursor:pointer; width:100%; text-align:center; letter-spacing:.01em; transition:background .15s; }
+        .trinity-legend .btn:hover { background:#1557b0; }
+        .trinity-legend .btn-secondary { background:var(--tv-btn-bg); color:var(--tv-text-sec); border:1px solid var(--tv-border2); }
+        .trinity-legend .btn-secondary:hover { background:var(--tv-btn-hover); color:var(--tv-text); }
 
-        /* Graph area + container */
+        /* Graph */
         .trinity-graph-area { flex:1; position:relative; overflow:hidden; }
-        #trinityGraphContainer { position:absolute; top:0; left:0; right:0; bottom:0; background:var(--tv-bg); }
+        #trinityGraphContainer { position:absolute; inset:0; background:var(--tv-bg); }
 
-        /* Context Drawer right panel */
-        .trinity-detail-panel { position:absolute; right:0; top:0; bottom:0; width:300px; background:var(--tv-panel); border-left:1px solid var(--tv-border); color:var(--tv-text); padding:20px; overflow-y:auto; transform:translateX(100%); transition:transform 0.25s ease; z-index:10; }
+        /* Detail panel */
+        .trinity-detail-panel { position:absolute; right:0; top:0; bottom:0; width:320px; background:var(--tv-panel); border-left:1px solid var(--tv-border); color:var(--tv-text); padding:24px 20px; overflow-y:auto; transform:translateX(100%); transition:transform .22s cubic-bezier(.4,0,.2,1); z-index:10; box-shadow:-2px 0 8px rgba(0,0,0,.08); }
         .trinity-detail-panel.open { transform:translateX(0); }
-        .trinity-detail-panel h3 { font-family:var(--font-hand); font-size:20px; margin-bottom:4px; color:var(--tv-text-head); }
-        .tdp-type { font-size:10px; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:10px; color:var(--tv-text-muted); font-family:monospace; }
-        .tdp-oneliner { font-size:13px; color:var(--tv-text-sec); margin-bottom:14px; line-height:1.5; }
-        .tdp-block { border-top:1px solid var(--tv-border); padding-top:10px; margin-top:10px; }
-        .tdp-block-label { font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:var(--tv-text-muted); margin-bottom:4px; font-family:monospace; }
-        .tdp-block-content { font-size:13px; color:var(--tv-text-sec); line-height:1.5; }
-        .tdp-connections { font-size:12px; color:var(--tv-text-muted); margin-top:14px; line-height:1.8; }
-        .tdp-close { position:absolute; top:12px; right:12px; background:none; border:none; color:var(--tv-text-muted); font-size:20px; cursor:pointer; line-height:1; }
-        .tdp-close:hover { color:var(--tv-text); }
-        .tdp-edit-btn { margin-top:12px; padding:8px 16px; background:var(--tv-btn-bg); border:1px solid var(--tv-border2); border-radius:6px; color:var(--tv-text-sec); font-size:13px; cursor:pointer; width:100%; }
+        .trinity-detail-panel h3 { font-size:17px; font-weight:600; margin:0 0 4px; color:var(--tv-text-head); letter-spacing:-.2px; }
+        .tdp-type { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.08em; margin-bottom:12px; color:var(--tv-text-muted); }
+        .tdp-oneliner { font-size:13px; color:var(--tv-text-sec); margin-bottom:16px; line-height:1.6; }
+        .tdp-block { border-top:1px solid var(--tv-border); padding-top:12px; margin-top:12px; }
+        .tdp-block-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--tv-text-muted); margin-bottom:4px; }
+        .tdp-block-content { font-size:13px; color:var(--tv-text-sec); line-height:1.6; }
+        .tdp-connections { font-size:12px; color:var(--tv-text-muted); margin-top:16px; line-height:2; }
+        .tdp-close { position:absolute; top:14px; right:14px; background:none; border:none; color:var(--tv-text-muted); font-size:18px; cursor:pointer; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:background .15s; }
+        .tdp-close:hover { background:var(--tv-btn-bg); color:var(--tv-text); }
+        .tdp-edit-btn { margin-top:10px; padding:9px 16px; background:var(--tv-btn-bg); border:1px solid var(--tv-border2); border-radius:6px; color:var(--tv-text-sec); font-size:13px; cursor:pointer; width:100%; text-align:left; transition:background .15s; }
         .tdp-edit-btn:hover { background:var(--tv-btn-hover); color:var(--tv-text); }
-
-        /* Sidebar action buttons */
-        .trinity-legend .btn { background:var(--tv-btn-bg); border:1px solid var(--tv-border2); color:var(--tv-text-sec); font-size:11px; border-radius:5px; }
-        .trinity-legend .btn:hover { background:var(--tv-btn-hover); color:var(--tv-text); }
-
-        /* Theme toggle pill */
-        .trinity-theme-toggle { display:flex; align-items:center; justify-content:space-between; background:var(--tv-btn-bg); border:1px solid var(--tv-border2); border-radius:5px; padding:5px 8px; font-size:11px; color:var(--tv-text-sec); cursor:pointer; width:100%; margin-bottom:4px; }
-        .trinity-theme-toggle:hover { background:var(--tv-btn-hover); color:var(--tv-text); }
-        .tl-hint { font-size:10px; color:var(--tv-hint); line-height:1.6; margin-top:auto; padding-top:8px; }
+        .tdp-primary-btn { background:#1a73e8; border:none; color:#fff; border-radius:6px; padding:10px 16px; font-size:13px; font-weight:500; cursor:pointer; width:100%; margin-top:8px; transition:background .15s; }
+        .tdp-primary-btn:hover { background:#1557b0; }
+        .tdp-input { width:100%; padding:9px 10px; border-radius:6px; border:1px solid var(--tv-border2); background:#fff; color:var(--tv-text); font-size:13px; box-sizing:border-box; font-family:inherit; outline:none; transition:border-color .15s; }
+        .tdp-input:focus { border-color:#1a73e8; }
+        .tdp-textarea { width:100%; padding:9px 10px; border-radius:6px; border:1px solid var(--tv-border2); background:#fff; color:var(--tv-text); font-size:13px; resize:vertical; box-sizing:border-box; font-family:inherit; outline:none; min-height:90px; transition:border-color .15s; }
+        .tdp-textarea:focus { border-color:#1a73e8; }
     </style>
 </head>
 <body>
@@ -2034,12 +2020,6 @@
 
         <!-- Right Pane: Workspace -->
         <div class="workspace-pane">
-            <div class="view-tabs">
-                <button class="view-tab" data-view="fieldnotes" onclick="switchView('fieldnotes')">Field Notes</button>
-                <button class="view-tab" data-view="situations" onclick="switchView('situations')">Map</button>
-                <button class="view-tab" data-view="flourish" onclick="switchView('flourish')">Grow</button>
-                <button class="view-tab active" data-view="trinity" onclick="switchView('trinity')">Trinity</button>
-            </div>
             <div class="workspace-header">
                 <button class="btn btn-what" id="addWHATBtn" onclick="openModal('WHAT')" style="display:none">+ WHAT 📦</button>
                 <button class="btn btn-whatif" id="addWHATIFBtn" onclick="openModal('WHAT_IF')" style="display:none">+ WHAT IF 💡</button>
@@ -2130,12 +2110,8 @@
 
         <div class="trinity-view" id="trinityView">
             <div class="trinity-legend">
-                <button onclick="switchView('situations')" style="width:100%;margin-bottom:4px;padding:7px 8px;background:var(--tv-btn-bg);border:1px solid var(--tv-border2);border-radius:6px;font-size:12px;cursor:pointer;color:var(--tv-text-sec);text-align:left">← Back</button>
-                <button class="trinity-theme-toggle" id="trinityThemeBtn" onclick="toggleTrinityTheme()">
-                    <span id="trinityThemeLabel">🌙 Dark</span>
-                    <span style="font-size:14px" id="trinityThemeIcon">☀</span>
-                </button>
-                <div class="tl-title">TRINITY LAYER</div>
+                <div class="tl-logo">BackyardOne</div>
+                <div class="tl-title">DISCOVERY MAP</div>
                 <div class="tl-item"><span class="tl-dot" style="background:var(--tv-node-who)"></span>WHO (Actors)</div>
                 <div class="tl-item"><span class="tl-dot" style="background:var(--tv-node-what)"></span>WHAT (Assets/Facts)</div>
                 <div class="tl-item"><span class="tl-dot" style="background:var(--tv-node-whatif)"></span>WHAT IF (Ideas)</div>
@@ -2153,14 +2129,10 @@
                 <div class="tl-item"><span class="tl-dot" style="background:#FFC107"></span>Claimed</div>
                 <div class="tl-item"><span class="tl-dot" style="background:#4CAF50"></span>Completed</div>
                 <div class="tl-divider"></div>
-                <button class="btn btn-who" onclick="openModal('WHO')" style="font-size:12px;padding:6px 8px;width:100%;margin-bottom:4px">+ WHO 👤</button>
-                <button class="btn" onclick="openModal('COMMUNITY')" style="font-size:12px;padding:6px 8px;width:100%;background:var(--accent-community-who);color:#fff;font-family:var(--font-hand);margin-bottom:4px">+ Community 🏛</button>
-                <button class="btn" onclick="exportGraphJSON()" style="font-size:11px;padding:6px 8px;width:100%;margin-bottom:4px">Export JSON</button>
-                <button class="btn" onclick="openJsonPaste()" style="font-size:11px;padding:6px 8px;width:100%;margin-bottom:4px">Paste JSON</button>
-                <button class="btn" onclick="document.getElementById('blinqInput').click()" style="font-size:11px;padding:6px 8px;width:100%;margin-bottom:4px">Import Blinq CSV</button>
-                <input type="file" id="blinqInput" accept=".csv" onchange="importBlinqCSV(event)" style="display:none">
-                <button id="orphanToggleBtn" onclick="toggleOrphans()" style="font-size:11px;padding:6px 8px;width:100%;margin-bottom:8px;opacity:0.7">Show orphans</button>
-                <div class="tl-hint">Click → details<br>Double-click → edit<br>Scroll → zoom</div>
+                <button class="btn" onclick="openModal('WHO')" style="margin-bottom:6px">+ Add Target</button>
+                <button class="btn btn-secondary" onclick="exportGraphJSON()" style="margin-bottom:4px;font-size:11px">Export JSON</button>
+                <button class="btn btn-secondary" onclick="openJsonPaste()" style="font-size:11px">Import JSON</button>
+                <div class="tl-hint">Click node → details<br>Double-click → edit<br>Scroll → zoom</div>
             </div>
             <div class="trinity-graph-area">
                 <div id="trinityGraphContainer"></div>
@@ -2168,8 +2140,6 @@
             </div>
         </div>
 
-        <button class="mic-btn" id="micBtn" onclick="toggleMic()">🎙</button>
-        <div class="mic-live" id="micLive"></div>
 
         <!-- Modal -->
         <div class="modal-overlay" id="modalOverlay" onclick="closeModalOnOverlay(event)">
@@ -4191,11 +4161,11 @@
                         <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--tv-border)">
                             ${statusBadge}
                             <div style="margin-top:12px;font-size:12px;color:var(--tv-text-muted);margin-bottom:6px">Who's taking this interview?</div>
-                            <select id="claimNameSelect" style="width:100%;padding:7px 10px;border-radius:6px;border:1px solid var(--tv-border2);background:var(--tv-btn-bg);color:var(--tv-text);font-size:13px;margin-bottom:8px">
+                            <select id="claimNameSelect" class="tdp-input" style="margin-bottom:8px">
                                 <option value="">Select your name…</option>
                                 ${opts}
                             </select>
-                            <button onclick="claimInterview('${src.id}')" style="width:100%;padding:9px;border:none;border-radius:6px;background:#FFC107;color:#000;font-size:13px;font-weight:600;cursor:pointer">Claim Interview →</button>
+                            <button onclick="claimInterview('${src.id}')" class="tdp-primary-btn">Claim Interview →</button>
                         </div>`;
                 } else if (status === 'claimed') {
                     claimUI = `
@@ -4203,9 +4173,9 @@
                             ${statusBadge}
                             <div style="margin-top:8px;font-size:13px">Claimed by <strong style="color:#4a9eff">${escapeHtml(src.owner || '')}</strong></div>
                             <div style="margin-top:10px;font-size:12px;color:var(--tv-text-muted);margin-bottom:6px">Paste your interview notes:</div>
-                            <textarea id="interviewNotes" placeholder="Key quotes, findings, pain points…" style="width:100%;height:90px;padding:8px;border-radius:6px;border:1px solid var(--tv-border2);background:var(--tv-btn-bg);color:var(--tv-text);font-size:12px;resize:vertical;box-sizing:border-box"></textarea>
-                            <input id="interviewLink" type="url" placeholder="Doc / Notion / Loom link (optional)" style="width:100%;padding:7px 8px;margin-top:6px;border-radius:6px;border:1px solid var(--tv-border2);background:var(--tv-btn-bg);color:var(--tv-text);font-size:12px;box-sizing:border-box">
-                            <button onclick="completeInterview('${src.id}')" style="width:100%;padding:9px;margin-top:6px;border:none;border-radius:6px;background:#4CAF50;color:#fff;font-size:13px;font-weight:600;cursor:pointer">Mark Complete ✓</button>
+                            <textarea id="interviewNotes" class="tdp-textarea" placeholder="Key quotes, findings, pain points…"></textarea>
+                            <input id="interviewLink" type="url" class="tdp-input" placeholder="Doc / Notion / Loom link (optional)" style="margin-top:8px">
+                            <button onclick="completeInterview('${src.id}')" class="tdp-primary-btn" style="background:#34a853" onmouseover="this.style.background='#2d8e47'" onmouseout="this.style.background='#34a853'">Mark Complete ✓</button>
                         </div>`;
                 } else if (status === 'completed') {
                     const notesBlocks = (src.blocks || []).filter(b => b.col1 && TEAM_MEMBERS.includes(b.col1)).map(b =>
@@ -4562,7 +4532,7 @@
 
 
         // ─── Theme system ──────────────────────────────────────────────
-        let _trinityLightMode = localStorage.getItem('trinityTheme') === 'light';
+        let _trinityLightMode = true; // always light
 
         function applyTrinityThemeClass() {
             const view = document.getElementById('trinityView');
