@@ -2148,6 +2148,11 @@
                 <div class="tl-item"><span class="tl-dot" style="background:var(--tv-text-muted)"></span>🔧 Constraint</div>
                 <div class="tl-item"><span class="tl-dot" style="background:var(--tv-node-com)"></span>❓ Unknown</div>
                 <div class="tl-divider"></div>
+                <div class="tl-title">INTERVIEW STATUS</div>
+                <div class="tl-item"><span class="tl-dot" style="background:#9E9E9E"></span>Unclaimed</div>
+                <div class="tl-item"><span class="tl-dot" style="background:#FFC107"></span>Claimed</div>
+                <div class="tl-item"><span class="tl-dot" style="background:#4CAF50"></span>Completed</div>
+                <div class="tl-divider"></div>
                 <button class="btn btn-who" onclick="openModal('WHO')" style="font-size:12px;padding:6px 8px;width:100%;margin-bottom:4px">+ WHO 👤</button>
                 <button class="btn" onclick="openModal('COMMUNITY')" style="font-size:12px;padding:6px 8px;width:100%;background:var(--accent-community-who);color:#fff;font-family:var(--font-hand);margin-bottom:4px">+ Community 🏛</button>
                 <button class="btn" onclick="exportGraphJSON()" style="font-size:11px;padding:6px 8px;width:100%;margin-bottom:4px">Export JSON</button>
@@ -2249,6 +2254,9 @@
         const db = firebase.firestore();
 
         // Data store
+        const TEAM_MEMBERS = ['Adele','Carter','Peter','Dale','Austin','Libby','Connor','Tobasum','Mark','Michael'];
+        const TEAM_NODE_ID = name => 'team-' + name.toLowerCase();
+
         let cards = [];
         let fieldNotes = [];
         let dailyTasks = [];
@@ -4155,7 +4163,7 @@
                 .map(c => {
                     const otherId = c.fromId === src.id ? c.toId : c.fromId;
                     const other = [...cards, ...communities].find(x => x.id === otherId);
-                    const verb = c.edgeLabel ? ` <span style="color:var(--text-muted);font-style:italic">${c.edgeLabel.replace(/_/g,' ')}</span>` : '';
+                    const verb = c.edgeLabel ? ` <span style="color:var(--tv-text-muted);font-style:italic">${c.edgeLabel.replace(/_/g,' ')}</span>` : '';
                     return other ? `• ${escapeHtml(other.name)}${verb}` : '';
                 }).filter(Boolean);
             const blocks = (src.blocks || []).slice(0, 3).map(b => {
@@ -4165,19 +4173,105 @@
                 const tmpl = allTemplates[b.type] || {};
                 return `<div class="tdp-block"><div class="tdp-block-label">${tmpl.label || b.type}</div><div class="tdp-block-content">${escapeHtml(content.slice(0,150))}${content.length>150?'…':''}</div></div>`;
             }).join('');
+
+            // Soft-claim UI for interview target nodes
+            const isInterviewTarget = src.interviewStatus !== undefined;
+            let claimUI = '';
+            if (isInterviewTarget) {
+                const status = src.interviewStatus || 'unclaimed';
+                const statusBadge = {
+                    unclaimed: `<span style="display:inline-block;padding:3px 10px;border-radius:12px;background:#9E9E9E;color:#fff;font-size:11px;font-weight:600;letter-spacing:.05em">UNCLAIMED</span>`,
+                    claimed:   `<span style="display:inline-block;padding:3px 10px;border-radius:12px;background:#FFC107;color:#000;font-size:11px;font-weight:600;letter-spacing:.05em">CLAIMED</span>`,
+                    completed: `<span style="display:inline-block;padding:3px 10px;border-radius:12px;background:#4CAF50;color:#fff;font-size:11px;font-weight:600;letter-spacing:.05em">COMPLETED</span>`,
+                }[status] || '';
+
+                if (status === 'unclaimed') {
+                    const opts = TEAM_MEMBERS.map(n => `<option value="${n}">${n}</option>`).join('');
+                    claimUI = `
+                        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--tv-border)">
+                            ${statusBadge}
+                            <div style="margin-top:12px;font-size:12px;color:var(--tv-text-muted);margin-bottom:6px">Who's taking this interview?</div>
+                            <select id="claimNameSelect" style="width:100%;padding:7px 10px;border-radius:6px;border:1px solid var(--tv-border2);background:var(--tv-btn-bg);color:var(--tv-text);font-size:13px;margin-bottom:8px">
+                                <option value="">Select your name…</option>
+                                ${opts}
+                            </select>
+                            <button onclick="claimInterview('${src.id}')" style="width:100%;padding:9px;border:none;border-radius:6px;background:#FFC107;color:#000;font-size:13px;font-weight:600;cursor:pointer">Claim Interview →</button>
+                        </div>`;
+                } else if (status === 'claimed') {
+                    claimUI = `
+                        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--tv-border)">
+                            ${statusBadge}
+                            <div style="margin-top:8px;font-size:13px">Claimed by <strong style="color:#4a9eff">${escapeHtml(src.owner || '')}</strong></div>
+                            <div style="margin-top:10px;font-size:12px;color:var(--tv-text-muted);margin-bottom:6px">Paste your interview notes:</div>
+                            <textarea id="interviewNotes" placeholder="Key quotes, findings, pain points…" style="width:100%;height:90px;padding:8px;border-radius:6px;border:1px solid var(--tv-border2);background:var(--tv-btn-bg);color:var(--tv-text);font-size:12px;resize:vertical;box-sizing:border-box"></textarea>
+                            <button onclick="completeInterview('${src.id}')" style="width:100%;padding:9px;margin-top:6px;border:none;border-radius:6px;background:#4CAF50;color:#fff;font-size:13px;font-weight:600;cursor:pointer">Mark Complete ✓</button>
+                        </div>`;
+                } else if (status === 'completed') {
+                    const notesBlocks = (src.blocks || []).filter(b => b.col1 && TEAM_MEMBERS.includes(b.col1)).map(b =>
+                        `<div style="margin-top:8px;padding:8px;border-radius:6px;background:var(--tv-btn-bg)">
+                            <div style="font-size:11px;color:#4a9eff;font-weight:600;margin-bottom:4px">${escapeHtml(b.col1)} · ${b.col2||''}</div>
+                            <div style="font-size:12px;color:var(--tv-text-sec);line-height:1.5">${escapeHtml(b.content||'')}</div>
+                        </div>`
+                    ).join('');
+                    claimUI = `
+                        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--tv-border)">
+                            ${statusBadge}
+                            <div style="margin-top:8px;font-size:13px">Completed by <strong style="color:#4a9eff">${escapeHtml(src.owner || '')}</strong></div>
+                            ${notesBlocks || '<div style="font-size:12px;color:var(--tv-text-muted);margin-top:8px">No notes logged yet.</div>'}
+                        </div>`;
+                }
+            }
+
             panel.innerHTML = `
                 <button class="tdp-close" onclick="closeTrinityDetail()">×</button>
                 <div class="tdp-type" style="color:${typeColors[src.type]||'#888'}">${src.type}</div>
                 <h3>${escapeHtml(src.name)}</h3>
-                <div class="tdp-oneliner">${escapeHtml(src.oneliner || '') || '<em style="color:var(--text-muted)">No description yet</em>'}</div>
+                <div class="tdp-oneliner">${escapeHtml(src.oneliner || '') || '<em style="color:var(--tv-text-muted)">No description yet</em>'}</div>
                 ${blocks}
-                ${connList.length ? `<div class="tdp-connections">${connList.join('<br>')}</div>` : ''}
+                ${claimUI}
+                ${connList.length ? `<div class="tdp-connections" style="margin-top:14px">${connList.join('<br>')}</div>` : ''}
                 <button class="tdp-edit-btn" onclick="closeTrinityDetail();openModal('${src.type}','${src.id}')">Edit card</button>
-                ${['WHO','person'].includes(src.type) ? `
+                ${['WHO','person'].includes(src.type) && !isInterviewTarget ? `
                 <button class="tdp-edit-btn" style="margin-top:8px" onclick="copyNodeContext('${src.id}')">📋 Copy Context JSON</button>
                 <button class="tdp-edit-btn" style="margin-top:6px;font-size:12px" onclick="openQuickLog(null,'${src.id}')">⚡ Quick Log</button>` : ''}
             `;
             panel.classList.add('open');
+        }
+
+        function claimInterview(targetId) {
+            const name = document.getElementById('claimNameSelect').value;
+            if (!name) { alert('Select your name first'); return; }
+            const card = cards.find(x => x.id === targetId);
+            if (!card) return;
+            card.interviewStatus = 'claimed';
+            card.owner = name;
+            // Ensure the claimer has a WHO node
+            const claimerId = TEAM_NODE_ID(name);
+            if (!cards.find(x => x.id === claimerId)) {
+                cards.push({ id: claimerId, type: 'WHO', name, oneliner: 'Team Member — BackyardOne', blocks: [], posX: 450 + Math.random()*80, posY: 450 + Math.random()*80, photo: null, emotions: null, datetime: null });
+            }
+            // Draw claim edge
+            const edgeId = `claim-${claimerId}-${targetId}`;
+            if (!connections.find(x => x.id === edgeId)) {
+                connections.push({ id: edgeId, fromId: claimerId, toId: targetId, edgeLabel: 'INTERVIEWING', bidirectional: false });
+            }
+            saveData();
+            renderTrinityGraph();
+            showTrinityDetail({ id: targetId });
+        }
+
+        function completeInterview(targetId) {
+            const notes = document.getElementById('interviewNotes') ? document.getElementById('interviewNotes').value.trim() : '';
+            const card = cards.find(x => x.id === targetId);
+            if (!card) return;
+            card.interviewStatus = 'completed';
+            if (notes) {
+                if (!card.blocks) card.blocks = [];
+                card.blocks.push({ type: 'assertion', content: notes, col1: card.owner || '', col2: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}), outcome: '', date: new Date().toISOString().split('T')[0], notes: '', field6: '' });
+            }
+            saveData();
+            renderTrinityGraph();
+            showTrinityDetail({ id: targetId });
         }
 
         function closeTrinityDetail() {
@@ -4617,6 +4711,18 @@
                 if (isBridge) {
                     nodeCfg.shadow = { enabled: true, color: 'rgba(240,180,0,0.65)', x: 0, y: 0, size: 20 };
                     nodeCfg.borderWidth = 3;
+                }
+
+                // Interview status fill (border stays per type)
+                if (c.interviewStatus === 'unclaimed') {
+                    nodeCfg.color.background = '#9E9E9E';
+                    nodeCfg.color.highlight = { background: '#b8b8b8', border: nodeCfg.color.border };
+                } else if (c.interviewStatus === 'claimed') {
+                    nodeCfg.color.background = '#FFC107';
+                    nodeCfg.color.highlight = { background: '#FFD54F', border: nodeCfg.color.border };
+                } else if (c.interviewStatus === 'completed') {
+                    nodeCfg.color.background = '#4CAF50';
+                    nodeCfg.color.highlight = { background: '#66BB6A', border: nodeCfg.color.border };
                 }
 
                 return {
