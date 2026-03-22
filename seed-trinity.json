@@ -1,0 +1,211 @@
+{
+  "cards": [
+    {
+      "id": "b1-who-adele",
+      "type": "WHO",
+      "name": "Adele",
+      "oneliner": "Founder — BackyardOne",
+      "blocks": [],
+      "photo": null,
+      "emotions": null,
+      "datetime": null,
+      "posX": 500,
+      "posY": 360
+    },
+    {
+      "id": "b1-who-target-homeowner",
+      "type": "WHO",
+      "name": "Target Homeowner",
+      "oneliner": "LA homeowner with R1 lot — primary customer",
+      "blocks": [
+        { "type": "assertion", "content": "LA homeowner sitting on an R1 lot with unused backyard space. Pain: building an ADU is opaque, expensive, and slow.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
+        { "type": "assertion", "content": "Archetype: 40–60yo homeowner, long-tenured in home, wants income or multigenerational living but doesn't know where to start.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+      ],
+      "photo": null,
+      "emotions": null,
+      "datetime": null,
+      "posX": 650,
+      "posY": 200
+    },
+    {
+      "id": "b1-who-local-gcs",
+      "type": "WHO",
+      "name": "Local GCs",
+      "oneliner": "General contractors — build partners",
+      "blocks": [
+        { "type": "assertion", "content": "Small-to-mid GCs operating in LA who build ADUs. Key question: are they overwhelmed with demand or hungry for leads?", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
+        { "type": "assertion", "content": "Possible two-sided platform play: connect vetted GCs to pre-qualified homeowner leads.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+      ],
+      "photo": null,
+      "emotions": null,
+      "datetime": null,
+      "posX": 750,
+      "posY": 450
+    },
+    {
+      "id": "b1-who-cranebuilders",
+      "type": "WHO",
+      "name": "Crane Builders",
+      "oneliner": "Nashville homebuilder — customer discovery target",
+      "blocks": [
+        { "type": "assertion", "content": "Nashville-based residential builder. Target archetype: established builder who may benefit from parcel feasibility data tools.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
+        { "type": "assertion", "content": "Website: cranebuilders.com", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+      ],
+      "photo": null,
+      "emotions": null,
+      "datetime": null,
+      "posX": 300,
+      "posY": 220
+    },
+    {
+      "id": "b1-what-nashville-r1-zoning",
+      "type": "WHAT",
+      "name": "Nashville R1 Zoning",
+      "oneliner": "Constraint",
+      "blocks": [
+        { "type": "assertion", "content": "Nashville has loosened some ADU rules but R1 zoning still creates setback, height, and lot coverage constraints that limit feasibility.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
+        { "type": "assertion", "content": "Key data to collect: what % of Nashville R1 lots are actually buildable for an ADU under current rules?", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+      ],
+      "photo": null,
+      "emotions": null,
+      "datetime": null,
+      "posX": 500,
+      "posY": 120
+    },
+    {
+      "id": "b1-what-heloc-products",
+      "type": "WHAT",
+      "name": "HELOC Products",
+      "oneliner": "Asset / Financing mechanism",
+      "blocks": [
+        { "type": "assertion", "content": "Home equity lines of credit are the primary financing vehicle homeowners use to fund ADU construction. High LA home values = large available equity.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
+        { "type": "assertion", "content": "Question: is friction in financing a meaningful blocker, or do homeowners just not know they can access equity easily?", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+      ],
+      "photo": null,
+      "emotions": null,
+      "datetime": null,
+      "posX": 850,
+      "posY": 280
+    },
+    {
+      "id": "b1-what-parcel-feasibility",
+      "type": "WHAT",
+      "name": "Parcel Feasibility Data",
+      "oneliner": "Core product concept",
+      "blocks": [
+        { "type": "assertion", "content": "Automated analysis of a parcel to determine ADU buildability: lot size, setbacks, zoning overlay, utility connections, slope.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
+        { "type": "assertion", "content": "Existing tools (permit.ai, Symbium) exist in LA — need to understand if coverage gaps exist in Nashville or other markets.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+      ],
+      "photo": null,
+      "emotions": null,
+      "datetime": null,
+      "posX": 600,
+      "posY": 500
+    },
+    {
+      "id": "b1-whatif-automated-feasibility",
+      "type": "WHAT_IF",
+      "name": "Automated Feasibility Engine",
+      "oneliner": "Core product hypothesis",
+      "blocks": [
+        { "type": "hypothesis", "content": "If a homeowner can get an instant, accurate feasibility report for their lot in under 60 seconds, conversion to paid services increases significantly.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
+        { "type": "status", "content": "Active — building v0 prototype", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+      ],
+      "photo": null,
+      "emotions": null,
+      "datetime": null,
+      "posX": 700,
+      "posY": 620
+    },
+    {
+      "id": "b1-whatif-builders-parcel-data",
+      "type": "WHAT_IF",
+      "name": "Builders pay for parcel feasibility data",
+      "oneliner": "PMF hypothesis",
+      "blocks": [
+        { "type": "hypothesis", "content": "If a builder can identify feasible lots 10x faster using BackyardOne data, they will pay for access — even outside LA.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
+        { "type": "status", "content": "Untested — customer discovery in progress", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+      ],
+      "photo": null,
+      "emotions": null,
+      "datetime": null,
+      "posX": 200,
+      "posY": 480
+    },
+    {
+      "id": "b1-sit-customer-discovery",
+      "type": "SITUATION",
+      "name": "Nashville Builder Outreach — Mar 2026",
+      "oneliner": "Customer discovery round",
+      "blocks": [
+        { "type": "whoNodes", "content": "Crane Builders", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
+        { "type": "industryContext", "content": "Residential construction, Nashville market", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
+        { "type": "assertion", "content": "Goal: validate whether builders feel pain around finding feasible lots / parcel data. 20-min conversation.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+      ],
+      "photo": null,
+      "emotions": {},
+      "datetime": "2026-03-22T00:00",
+      "posX": 200,
+      "posY": 330
+    }
+  ],
+  "communities": [
+    {
+      "id": "b1-comm-la-homeowners",
+      "type": "COMMUNITY",
+      "name": "LA Homeowners",
+      "oneliner": "R1 lot owners — primary customer segment",
+      "blocks": [],
+      "photo": null,
+      "emotions": null,
+      "datetime": null,
+      "trinityState": "WHO",
+      "posX": 820,
+      "posY": 140
+    },
+    {
+      "id": "b1-comm-nashville-builders",
+      "type": "COMMUNITY",
+      "name": "Nashville Builders",
+      "oneliner": "Residential builders in Nashville — customer discovery pool",
+      "blocks": [],
+      "photo": null,
+      "emotions": null,
+      "datetime": null,
+      "trinityState": "WHO",
+      "posX": 150,
+      "posY": 180
+    },
+    {
+      "id": "b1-comm-la-gcs",
+      "type": "COMMUNITY",
+      "name": "LA General Contractors",
+      "oneliner": "GCs who build ADUs in LA",
+      "blocks": [],
+      "photo": null,
+      "emotions": null,
+      "datetime": null,
+      "trinityState": "WHO",
+      "posX": 900,
+      "posY": 480
+    }
+  ],
+  "connections": [
+    { "id": "b1-c-1", "fromId": "b1-who-adele", "toId": "b1-who-target-homeowner", "edgeLabel": "DISCOVERY_TARGET", "bidirectional": false },
+    { "id": "b1-c-2", "fromId": "b1-who-adele", "toId": "b1-who-local-gcs", "edgeLabel": "DISCOVERY_TARGET", "bidirectional": false },
+    { "id": "b1-c-3", "fromId": "b1-who-target-homeowner", "toId": "b1-comm-la-homeowners", "edgeLabel": "BELONGS_TO", "bidirectional": false },
+    { "id": "b1-c-4", "fromId": "b1-who-local-gcs", "toId": "b1-comm-la-gcs", "edgeLabel": "BELONGS_TO", "bidirectional": false },
+    { "id": "b1-c-5", "fromId": "b1-who-target-homeowner", "toId": "b1-what-heloc-products", "edgeLabel": "USES", "bidirectional": false },
+    { "id": "b1-c-6", "fromId": "b1-who-target-homeowner", "toId": "b1-what-nashville-r1-zoning", "edgeLabel": "CONSTRAINED_BY", "bidirectional": false },
+    { "id": "b1-c-7", "fromId": "b1-what-nashville-r1-zoning", "toId": "b1-what-parcel-feasibility", "edgeLabel": "INPUTS_TO", "bidirectional": false },
+    { "id": "b1-c-8", "fromId": "b1-what-parcel-feasibility", "toId": "b1-whatif-automated-feasibility", "edgeLabel": "ENABLES", "bidirectional": false },
+    { "id": "b1-c-9", "fromId": "b1-whatif-automated-feasibility", "toId": "b1-whatif-builders-parcel-data", "edgeLabel": "RELATED_TO", "bidirectional": false },
+    { "id": "b1-c-10", "fromId": "b1-who-adele", "toId": "b1-sit-customer-discovery", "edgeLabel": "INITIATES", "bidirectional": false },
+    { "id": "b1-c-11", "fromId": "b1-who-cranebuilders", "toId": "b1-sit-customer-discovery", "edgeLabel": "TARGET_OF", "bidirectional": false },
+    { "id": "b1-c-12", "fromId": "b1-who-cranebuilders", "toId": "b1-comm-nashville-builders", "edgeLabel": "BELONGS_TO", "bidirectional": false },
+    { "id": "b1-c-13", "fromId": "b1-sit-customer-discovery", "toId": "b1-whatif-builders-parcel-data", "edgeLabel": "TESTS", "bidirectional": false },
+    { "id": "b1-c-14", "fromId": "b1-who-local-gcs", "toId": "b1-what-parcel-feasibility", "edgeLabel": "WOULD_USE", "bidirectional": false }
+  ],
+  "dailyCards": [],
+  "dailyTasks": []
+}

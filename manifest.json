@@ -1,0 +1,17 @@
+{
+  "name": "BackyardOne Discovery",
+  "short_name": "B1 Discovery",
+  "description": "Customer discovery brain for BackyardOne",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f1eb",
+  "theme_color": "#a68b5b",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
