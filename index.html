@@ -2036,9 +2036,9 @@
         <div class="workspace-pane">
             <div class="view-tabs">
                 <button class="view-tab" data-view="fieldnotes" onclick="switchView('fieldnotes')">Field Notes</button>
-                <button class="view-tab active" data-view="situations" onclick="switchView('situations')">Map</button>
+                <button class="view-tab" data-view="situations" onclick="switchView('situations')">Map</button>
                 <button class="view-tab" data-view="flourish" onclick="switchView('flourish')">Grow</button>
-                <button class="view-tab" data-view="trinity" onclick="switchView('trinity')">Trinity</button>
+                <button class="view-tab active" data-view="trinity" onclick="switchView('trinity')">Trinity</button>
             </div>
             <div class="workspace-header">
                 <button class="btn btn-what" id="addWHATBtn" onclick="openModal('WHAT')" style="display:none">+ WHAT 📦</button>
@@ -2262,7 +2262,7 @@
         let dailyTasks = [];
         let communities = [];
         let connections = [];
-        let currentView = 'situations';
+        let currentView = 'trinity';
         let situationsSubview = 'calendar';
         let calMonth = new Date().getMonth();
         let calYear = new Date().getFullYear();
@@ -4873,8 +4873,9 @@
             }).catch(() => {});
         }
 
-        // Load on page ready
+        // Load on page ready — open directly on Trinity graph
         applyTrinityThemeClass();
+        switchView('trinity');
         loadData();
         initSpeech();
 
