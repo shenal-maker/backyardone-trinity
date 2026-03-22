@@ -4204,6 +4204,7 @@
                             <div style="margin-top:8px;font-size:13px">Claimed by <strong style="color:#4a9eff">${escapeHtml(src.owner || '')}</strong></div>
                             <div style="margin-top:10px;font-size:12px;color:var(--tv-text-muted);margin-bottom:6px">Paste your interview notes:</div>
                             <textarea id="interviewNotes" placeholder="Key quotes, findings, pain points…" style="width:100%;height:90px;padding:8px;border-radius:6px;border:1px solid var(--tv-border2);background:var(--tv-btn-bg);color:var(--tv-text);font-size:12px;resize:vertical;box-sizing:border-box"></textarea>
+                            <input id="interviewLink" type="url" placeholder="Doc / Notion / Loom link (optional)" style="width:100%;padding:7px 8px;margin-top:6px;border-radius:6px;border:1px solid var(--tv-border2);background:var(--tv-btn-bg);color:var(--tv-text);font-size:12px;box-sizing:border-box">
                             <button onclick="completeInterview('${src.id}')" style="width:100%;padding:9px;margin-top:6px;border:none;border-radius:6px;background:#4CAF50;color:#fff;font-size:13px;font-weight:600;cursor:pointer">Mark Complete ✓</button>
                         </div>`;
                 } else if (status === 'completed') {
@@ -4211,6 +4212,7 @@
                         `<div style="margin-top:8px;padding:8px;border-radius:6px;background:var(--tv-btn-bg)">
                             <div style="font-size:11px;color:#4a9eff;font-weight:600;margin-bottom:4px">${escapeHtml(b.col1)} · ${b.col2||''}</div>
                             <div style="font-size:12px;color:var(--tv-text-sec);line-height:1.5">${escapeHtml(b.content||'')}</div>
+                            ${b.notes ? `<a href="${escapeHtml(b.notes)}" target="_blank" style="font-size:11px;color:#1a73e8;text-decoration:none;display:inline-block;margin-top:4px">View Notes Doc →</a>` : ''}
                         </div>`
                     ).join('');
                     claimUI = `
@@ -4262,12 +4264,13 @@
 
         function completeInterview(targetId) {
             const notes = document.getElementById('interviewNotes') ? document.getElementById('interviewNotes').value.trim() : '';
+            const link = document.getElementById('interviewLink') ? document.getElementById('interviewLink').value.trim() : '';
             const card = cards.find(x => x.id === targetId);
             if (!card) return;
             card.interviewStatus = 'completed';
-            if (notes) {
+            if (notes || link) {
                 if (!card.blocks) card.blocks = [];
-                card.blocks.push({ type: 'assertion', content: notes, col1: card.owner || '', col2: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}), outcome: '', date: new Date().toISOString().split('T')[0], notes: '', field6: '' });
+                card.blocks.push({ type: 'assertion', content: notes, col1: card.owner || '', col2: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}), outcome: '', date: new Date().toISOString().split('T')[0], notes: link, field6: '' });
             }
             saveData();
             renderTrinityGraph();
