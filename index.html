@@ -1418,6 +1418,22 @@
         .trinity-legend .btn:hover { background:#1557b0; }
         .trinity-legend .btn-secondary { background:var(--tv-btn-bg); color:var(--tv-text-sec); border:1px solid var(--tv-border2); }
         .trinity-legend .btn-secondary:hover { background:var(--tv-btn-hover); color:var(--tv-text); }
+        .trinity-legend .btn-connect { background:#fff; color:#1a73e8; border:1.5px solid #1a73e8; }
+        .trinity-legend .btn-connect:hover { background:#e8f0fe; }
+        .trinity-legend .btn-connect.active { background:#1a73e8; color:#fff; }
+
+        /* Toast */
+        #g-toast { position:fixed; bottom:32px; left:50%; transform:translateX(-50%) translateY(20px); background:#202124; color:#fff; font-size:13px; padding:10px 20px; border-radius:8px; opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; z-index:999; white-space:nowrap; }
+        #g-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+        /* Contenteditable fields in panel */
+        .tdp-editable { outline:none; border-radius:4px; padding:2px 4px; margin:-2px -4px; cursor:text; transition:background .15s; }
+        .tdp-editable:hover { background:var(--tv-btn-bg); }
+        .tdp-editable:focus { background:var(--tv-btn-bg); box-shadow:0 0 0 2px #1a73e8; }
+
+        /* Delete button in panel */
+        .tdp-delete-btn { margin-top:8px; padding:8px 16px; background:#fff; border:1px solid #dadce0; border-radius:6px; color:#ea4335; font-size:13px; cursor:pointer; width:100%; text-align:left; transition:background .15s; }
+        .tdp-delete-btn:hover { background:#fce8e6; }
 
         /* Graph */
         .trinity-graph-area { flex:1; position:relative; overflow:hidden; }
@@ -2130,9 +2146,10 @@
                 <div class="tl-item"><span class="tl-dot" style="background:#4CAF50"></span>Completed</div>
                 <div class="tl-divider"></div>
                 <button class="btn" onclick="openModal('WHO')" style="margin-bottom:6px">+ Add Target</button>
+                <button id="connectModeBtn" class="btn btn-connect" onclick="toggleConnectMode()" style="margin-bottom:6px">Connect nodes</button>
                 <button class="btn btn-secondary" onclick="exportGraphJSON()" style="margin-bottom:4px;font-size:11px">Export JSON</button>
                 <button class="btn btn-secondary" onclick="openJsonPaste()" style="font-size:11px">Import JSON</button>
-                <div class="tl-hint">Click node → details<br>Double-click → edit<br>Scroll → zoom</div>
+                <div class="tl-hint">Click → details<br>Double-click → rename<br>Drag → move<br>Connect → draw edges</div>
             </div>
             <div class="trinity-graph-area">
                 <div id="trinityGraphContainer"></div>
@@ -4197,17 +4214,17 @@
 
             panel.innerHTML = `
                 <button class="tdp-close" onclick="closeTrinityDetail()">×</button>
-                <div class="tdp-type" style="color:${typeColors[src.type]||'#888'}">${src.type}</div>
-                <h3>${escapeHtml(src.name)}</h3>
-                <div class="tdp-oneliner">${escapeHtml(src.oneliner || '') || '<em style="color:var(--tv-text-muted)">No description yet</em>'}</div>
+                <div class="tdp-type" style="color:${typeColors[src.type]||'#888'};margin-bottom:8px">${src.type.replace('_',' ')}</div>
+                <h3 class="tdp-editable" contenteditable="true" onblur="saveNodeField('${src.id}','name',this)" style="font-size:18px;font-weight:600;margin:0 0 6px;outline:none;border-radius:4px;padding:2px 4px;margin-left:-4px">${escapeHtml(src.name)}</h3>
+                <div class="tdp-editable tdp-oneliner" contenteditable="true" onblur="saveNodeField('${src.id}','oneliner',this)" style="margin-bottom:16px;min-height:20px" data-placeholder="Add a description…">${escapeHtml(src.oneliner||'')}</div>
                 ${blocks}
                 ${claimUI}
-                ${connList.length ? `<div class="tdp-connections" style="margin-top:14px">${connList.join('<br>')}</div>` : ''}
-                <button class="tdp-edit-btn" onclick="closeTrinityDetail();openModal('${src.type}','${src.id}')">Edit card</button>
+                ${connList.length ? `<div class="tdp-connections" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--tv-border)">${connList.join('<br>')}</div>` : ''}
                 <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--tv-border)">
-                    <div class="tdp-block-label" style="margin-bottom:6px">Quick notes</div>
-                    <textarea class="tdp-textarea" style="min-height:70px;font-size:12px" placeholder="Add a note…" onblur="saveQuickNote('${src.id}',this)">${escapeHtml(src._quickNote||'')}</textarea>
+                    <div class="tdp-block-label" style="margin-bottom:6px">Notes</div>
+                    <textarea class="tdp-textarea" style="min-height:80px;font-size:13px" placeholder="Add a note…" onblur="saveQuickNote('${src.id}',this)">${escapeHtml(src._quickNote||'')}</textarea>
                 </div>
+                <button class="tdp-delete-btn" onclick="deleteNode('${src.id}')">Delete node</button>
             `;
             panel.classList.add('open');
         }
@@ -4247,6 +4264,50 @@
             saveData();
             renderTrinityGraph();
             showTrinityDetail({ id: targetId });
+        }
+
+        function gToast(msg) {
+            const t = document.getElementById('g-toast');
+            t.textContent = msg; t.classList.add('show');
+            clearTimeout(t._tid);
+            t._tid = setTimeout(() => t.classList.remove('show'), 2200);
+        }
+
+        function saveNodeField(cardId, field, el) {
+            const card = [...cards, ...communities].find(x => x.id === cardId);
+            if (!card) return;
+            const val = el.innerText.trim();
+            if (card[field] === val) return;
+            card[field] = val;
+            saveData();
+            renderTrinityGraph();
+            gToast('Saved');
+        }
+
+        function deleteNode(cardId) {
+            if (!confirm('Delete this node?')) return;
+            cards = cards.filter(x => x.id !== cardId);
+            communities = communities.filter(x => x.id !== cardId);
+            connections = connections.filter(x => x.fromId !== cardId && x.toId !== cardId);
+            saveData();
+            closeTrinityDetail();
+            renderTrinityGraph();
+            gToast('Node deleted');
+        }
+
+        let _connectMode = false;
+        function toggleConnectMode() {
+            _connectMode = !_connectMode;
+            const btn = document.getElementById('connectModeBtn');
+            if (_connectMode) {
+                btn.classList.add('active');
+                btn.textContent = 'Cancel connect';
+                _trinityNetwork.addEdgeMode();
+            } else {
+                btn.classList.remove('active');
+                btn.textContent = 'Connect nodes';
+                _trinityNetwork.disableEditMode();
+            }
         }
 
         function saveNodeBlock(cardId, textarea) {
@@ -4688,6 +4749,7 @@
                     ? (c.name || 'Untitled').slice(0, 19) + '…'
                     : (c.name || 'Untitled');
                 const typeTag = c.type.replace('_', ' ');
+                const ownerTag = (c.interviewStatus === 'claimed' || c.interviewStatus === 'completed') && c.owner ? `\n· ${c.owner}` : '';
                 const isOrphan = !connectedIds.has(c.id);
                 const isWho = ['WHO','person'].includes(c.type);
                 const deg = degree[c.id] || 0;
@@ -4717,7 +4779,7 @@
 
                 return {
                     id: c.id,
-                    label: label + '\n' + typeTag,
+                    label: label + '\n' + typeTag + ownerTag,
                     title: c.oneliner || c.name,
                     x: c.posX, y: c.posY,
                     hidden: isOrphan && _trinityHideOrphans,
@@ -4789,6 +4851,33 @@
                 layout: {
                     improvedLayout: true,
                 },
+                manipulation: {
+                    enabled: false,
+                    addEdge: (data, callback) => {
+                        if (data.from === data.to) return;
+                        const id = 'edge-' + Date.now();
+                        connections.push({ id, fromId: data.from, toId: data.to, edgeLabel: 'CONNECTS', bidirectional: false });
+                        saveData();
+                        callback(data);
+                        _connectMode = false;
+                        const btn = document.getElementById('connectModeBtn');
+                        if (btn) { btn.classList.remove('active'); btn.textContent = 'Connect nodes'; }
+                        gToast('Edge added');
+                    },
+                    deleteNode: (data, callback) => {
+                        data.nodes.forEach(id => {
+                            cards = cards.filter(x => x.id !== id);
+                            communities = communities.filter(x => x.id !== id);
+                            connections = connections.filter(x => x.fromId !== id && x.toId !== id);
+                        });
+                        data.edges.forEach(id => { connections = connections.filter(x => x.id !== id); });
+                        saveData(); callback(data); closeTrinityDetail(); gToast('Deleted');
+                    },
+                    deleteEdge: (data, callback) => {
+                        data.edges.forEach(id => { connections = connections.filter(x => x.id !== id); });
+                        saveData(); callback(data); gToast('Edge removed');
+                    },
+                },
             };
 
             _trinityNetwork = new vis.Network(container, data, options);
@@ -4807,9 +4896,22 @@
 
             _trinityNetwork.on('doubleClick', params => {
                 if (params.nodes.length > 0) {
-                    const nodeId = params.nodes[0];
-                    const src = [...cards, ...communities].find(x => x.id === nodeId);
-                    if (src) { closeTrinityDetail(); openModal(src.type, src.id); }
+                    showTrinityDetail({ id: params.nodes[0] });
+                    // Focus name field for inline rename
+                    setTimeout(() => {
+                        const h = document.querySelector('.trinity-detail-panel h3.tdp-editable');
+                        if (h) { h.focus(); const r = document.createRange(); r.selectNodeContents(h); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); }
+                    }, 100);
+                }
+            });
+
+            // Delete key removes selected node/edge
+            document.addEventListener('keydown', e => {
+                if ((e.key === 'Delete' || e.key === 'Backspace') && document.activeElement === document.body) {
+                    const sel = _trinityNetwork.getSelectedNodes();
+                    const selE = _trinityNetwork.getSelectedEdges();
+                    if (sel.length) { sel.forEach(id => { cards = cards.filter(x => x.id !== id); connections = connections.filter(x => x.fromId !== id && x.toId !== id); }); saveData(); renderTrinityGraph(); gToast('Deleted'); }
+                    else if (selE.length) { selE.forEach(id => { connections = connections.filter(x => x.id !== id); }); saveData(); renderTrinityGraph(); gToast('Edge removed'); }
                 }
             });
 
@@ -4876,5 +4978,6 @@
     </script>
     <button id="micBtn" onclick="toggleMic()" title="Voice note" style="position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:#1a73e8;border:none;font-size:22px;cursor:pointer;box-shadow:0 2px 8px rgba(26,115,232,.4);z-index:150;display:flex;align-items:center;justify-content:center;transition:background .15s">🎙</button>
     <div id="micLive" style="display:none;position:fixed;bottom:88px;right:16px;width:280px;background:#fff;border:1px solid #dadce0;border-radius:12px;padding:14px 16px;z-index:150;font-size:13px;color:#5f6368;line-height:1.6;box-shadow:0 4px 16px rgba(0,0,0,.12)"></div>
+    <div id="g-toast"></div>
 </body>
 </html>
