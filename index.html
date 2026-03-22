@@ -4178,17 +4178,17 @@
                             <button onclick="completeInterview('${src.id}')" class="tdp-primary-btn" style="background:#34a853" onmouseover="this.style.background='#2d8e47'" onmouseout="this.style.background='#34a853'">Mark Complete ✓</button>
                         </div>`;
                 } else if (status === 'completed') {
-                    const notesBlocks = (src.blocks || []).filter(b => b.col1 && TEAM_MEMBERS.includes(b.col1)).map(b =>
-                        `<div style="margin-top:8px;padding:8px;border-radius:6px;background:var(--tv-btn-bg)">
-                            <div style="font-size:11px;color:#4a9eff;font-weight:600;margin-bottom:4px">${escapeHtml(b.col1)} · ${b.col2||''}</div>
-                            <div style="font-size:12px;color:var(--tv-text-sec);line-height:1.5">${escapeHtml(b.content||'')}</div>
-                            ${b.notes ? `<a href="${escapeHtml(b.notes)}" target="_blank" style="font-size:11px;color:#1a73e8;text-decoration:none;display:inline-block;margin-top:4px">View Notes Doc →</a>` : ''}
+                    const notesBlocks = (src.blocks || []).filter(b => b.col1 && TEAM_MEMBERS.includes(b.col1)).map((b, i) =>
+                        `<div style="margin-top:8px;padding:10px;border-radius:8px;background:var(--tv-btn-bg);border:1px solid var(--tv-border)">
+                            <div style="font-size:11px;color:#1a73e8;font-weight:600;margin-bottom:6px">${escapeHtml(b.col1)} · ${b.col2||''}</div>
+                            <textarea class="tdp-textarea" style="min-height:70px;font-size:12px" data-block-idx="${i}" onblur="saveNodeBlock('${src.id}',this)">${escapeHtml(b.content||'')}</textarea>
+                            ${b.notes ? `<a href="${escapeHtml(b.notes)}" target="_blank" style="font-size:11px;color:#1a73e8;text-decoration:none;display:inline-block;margin-top:6px">View Notes Doc →</a>` : ''}
                         </div>`
                     ).join('');
                     claimUI = `
                         <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--tv-border)">
                             ${statusBadge}
-                            <div style="margin-top:8px;font-size:13px">Completed by <strong style="color:#4a9eff">${escapeHtml(src.owner || '')}</strong></div>
+                            <div style="margin-top:8px;font-size:13px">Completed by <strong style="color:#1a73e8">${escapeHtml(src.owner || '')}</strong></div>
                             ${notesBlocks || '<div style="font-size:12px;color:var(--tv-text-muted);margin-top:8px">No notes logged yet.</div>'}
                         </div>`;
                 }
@@ -4203,9 +4203,10 @@
                 ${claimUI}
                 ${connList.length ? `<div class="tdp-connections" style="margin-top:14px">${connList.join('<br>')}</div>` : ''}
                 <button class="tdp-edit-btn" onclick="closeTrinityDetail();openModal('${src.type}','${src.id}')">Edit card</button>
-                ${['WHO','person'].includes(src.type) && !isInterviewTarget ? `
-                <button class="tdp-edit-btn" style="margin-top:8px" onclick="copyNodeContext('${src.id}')">📋 Copy Context JSON</button>
-                <button class="tdp-edit-btn" style="margin-top:6px;font-size:12px" onclick="openQuickLog(null,'${src.id}')">⚡ Quick Log</button>` : ''}
+                <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--tv-border)">
+                    <div class="tdp-block-label" style="margin-bottom:6px">Quick notes</div>
+                    <textarea class="tdp-textarea" style="min-height:70px;font-size:12px" placeholder="Add a note…" onblur="saveQuickNote('${src.id}',this)">${escapeHtml(src._quickNote||'')}</textarea>
+                </div>
             `;
             panel.classList.add('open');
         }
@@ -4245,6 +4246,21 @@
             saveData();
             renderTrinityGraph();
             showTrinityDetail({ id: targetId });
+        }
+
+        function saveNodeBlock(cardId, textarea) {
+            const card = cards.find(x => x.id === cardId);
+            if (!card) return;
+            const idx = parseInt(textarea.dataset.blockIdx);
+            const block = (card.blocks || [])[idx];
+            if (block) { block.content = textarea.value; saveData(); }
+        }
+
+        function saveQuickNote(cardId, textarea) {
+            const card = [...cards, ...communities].find(x => x.id === cardId);
+            if (!card) return;
+            card._quickNote = textarea.value;
+            saveData();
         }
 
         function closeTrinityDetail() {
@@ -4857,5 +4873,7 @@
             navigator.serviceWorker.register('/sw.js');
         }
     </script>
+    <button id="micBtn" onclick="toggleMic()" title="Voice note" style="position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:#1a73e8;border:none;font-size:22px;cursor:pointer;box-shadow:0 2px 8px rgba(26,115,232,.4);z-index:150;display:flex;align-items:center;justify-content:center;transition:background .15s">🎙</button>
+    <div id="micLive" style="display:none;position:fixed;bottom:88px;right:16px;width:280px;background:#fff;border:1px solid #dadce0;border-radius:12px;padding:14px 16px;z-index:150;font-size:13px;color:#5f6368;line-height:1.6;box-shadow:0 4px 16px rgba(0,0,0,.12)"></div>
 </body>
 </html>
