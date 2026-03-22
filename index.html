@@ -2034,7 +2034,7 @@
                     <input type="file" id="importInput" accept=".json" onchange="importData(event)">
                 </div>
             </div>
-            <div class="board-container view-situations" id="boardContainer">
+            <div class="board-container view-situations" id="boardContainer" style="display:none">
                 <canvas id="sketchCanvas"></canvas>
                 <svg id="networkSvg" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;">
                     <defs>
@@ -2061,7 +2061,7 @@
                 </div>
             </div>
         <!-- Flourish View -->
-        <div class="flourish-view" id="flourishView">
+        <div class="flourish-view" id="flourishView" style="display:none">
             <div class="flourish-inner">
                 <div class="flourish-nav">
                     <button class="flourish-nav-btn" onclick="navigateFlourishDay(-1)">←</button>
@@ -2090,7 +2090,7 @@
             </div>
         </div>
 
-        <div class="field-notes-view" id="fieldNotesView"><div id="fnList"></div></div>
+        <div class="field-notes-view" id="fieldNotesView" style="display:none"><div id="fnList"></div></div>
 
 
         <!-- JSON paste modal (Trinity) -->
@@ -2524,7 +2524,8 @@
             if (currentView !== 'flourish' && currentView !== 'trinity') saveSketch();
             currentView = view;
             document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
-            document.querySelector(`.view-tab[data-view="${view}"]`).classList.add('active');
+            const activeTab = document.querySelector(`.view-tab[data-view="${view}"]`);
+            if (activeTab) activeTab.classList.add('active');
             const isFlourish = view === 'flourish';
             const isFieldNotes = view === 'fieldnotes';
             const isTrinity = view === 'trinity';
