@@ -109,7 +109,7 @@ Replace the static legend with a live intelligence panel:
 |---|---|---|---|---|
 | GCs pay for pre-screened homeowner leads with confirmed lot feasibility | Local GCs | 🟢 Low | — | Untested |
 | Homeowners pay for instant lot feasibility report | Homeowners | 🟡 Med | — | Untested |
-| Builders pay for parcel data outside LA | Nashville builders | 🟡 Med | — | Untested |
+| Builders pay for parcel data outside LA | LA GCs | 🟡 Med | — | Untested |
 | HELOC lenders pay for pre-qualified ADU borrowers | Credit unions | 🔴 High | — | Untested |
 
 **Priority order based on research:** GCs first (lowest resistance, highest and fastest WTP), homeowners second, lenders later.

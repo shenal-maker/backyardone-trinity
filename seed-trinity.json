@@ -11,166 +11,166 @@
     { "id": "team-mark",    "type": "WHO", "name": "Mark",     "oneliner": "Team Member — BackyardOne", "blocks": [], "photo": null, "emotions": null, "datetime": null, "posX": 440, "posY": 560 },
     { "id": "team-michael", "type": "WHO", "name": "Michael",  "oneliner": "Team Member — BackyardOne", "blocks": [], "photo": null, "emotions": null, "datetime": null, "posX": 620, "posY": 530 },
 
-    { "id": "b1-who-cranebuilders", "type": "WHO", "name": "Crane Builders", "oneliner": "Nashville ADU/DADU builder", "interviewStatus": "unclaimed",
+    { "id": "b1-who-actonadv", "type": "WHO", "name": "Acton ADU", "oneliner": "LA ADU design-build specialist", "interviewStatus": "unclaimed",
       "blocks": [
-        { "type": "assertion", "content": "Nashville-based residential builder specializing in custom ADUs across Belle Meade, Green Hills, Brentwood, Franklin.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
-        { "type": "assertion", "content": "Contact via cranebuilders.com — likely to have strong views on lot feasibility pain.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+        { "type": "assertion", "content": "One of the most prominent ADU-focused GCs in LA. Works across Silver Lake, Eagle Rock, Los Feliz, and the Westside. actonadv.com — strong candidate for understanding lot feasibility pain in the field.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
+        { "type": "assertion", "content": "Contact via their website. Likely has opinions on how often pre-construction site assessments waste their time.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 200, "posY": 160 },
 
-    { "id": "b1-who-urcovered", "type": "WHO", "name": "URCovered Construction", "oneliner": "Nashville ADU builder — handles permits to keys", "interviewStatus": "unclaimed",
+    { "id": "b1-who-uniteddwelling", "type": "WHO", "name": "United Dwelling", "oneliner": "LA ADU builder + property manager — full stack", "interviewStatus": "unclaimed",
       "blocks": [
-        { "type": "assertion", "content": "Streamlines ADU process from feasibility to keys in hand. Strong candidate for understanding current pain in feasibility scoping.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+        { "type": "assertion", "content": "Builds and manages ADUs in LA — handles permits, construction, and rental placement. uniteddwelling.com. Strong source for understanding the full funnel from feasibility to cash flow.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 300, "posY": 140 },
 
-    { "id": "b1-who-buildco7", "type": "WHO", "name": "BuildCo7", "oneliner": "Nashville General Contracting — DADU specialist", "interviewStatus": "unclaimed",
+    { "id": "b1-who-abodu", "type": "WHO", "name": "Abodu", "oneliner": "Prefab ADU builder — SoCal market", "interviewStatus": "unclaimed",
       "blocks": [
-        { "type": "assertion", "content": "Notes that new Nashville zoning makes nearly anyone eligible for a DADU. Likely doing high volume — good for pipeline insights.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+        { "type": "assertion", "content": "Modular/prefab ADU company active in the LA market. abodu.com. Useful for understanding whether lot data friction is different for prefab vs. stick-built workflows.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 160, "posY": 240 },
 
-    { "id": "b1-who-musiccityremodels", "type": "WHO", "name": "Music City Remodels", "oneliner": "Premier custom DADU builder Nashville", "interviewStatus": "unclaimed",
+    { "id": "b1-who-maxable", "type": "WHO", "name": "Maxable", "oneliner": "LA ADU platform — connects homeowners to GCs", "interviewStatus": "unclaimed",
       "blocks": [
-        { "type": "assertion", "content": "Self-described premier custom DADU builder. Good candidate to understand what data or tools they wish they had during scoping.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+        { "type": "assertion", "content": "LA-based ADU marketplace that connects homeowners to vetted GCs. maxablespace.com. Key insight source: they see the homeowner side AND the GC side of the feasibility conversation.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 240, "posY": 260 },
 
-    { "id": "b1-who-dancompany", "type": "WHO", "name": "The Dan Company", "oneliner": "Nashville DADU builder", "interviewStatus": "unclaimed",
+    { "id": "b1-who-villabuilders", "type": "WHO", "name": "Villa Builders", "oneliner": "LA ADU GC — design-build", "interviewStatus": "unclaimed",
       "blocks": [
-        { "type": "assertion", "content": "Plans and builds DADUs for home offices, studios, multigenerational living.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+        { "type": "assertion", "content": "Full-service ADU builder in the LA area. Handles design, permitting, construction. Good candidate for understanding how often they lose deals due to lot infeasibility discovered late.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 340, "posY": 210 },
 
-    { "id": "b1-who-artisan", "type": "WHO", "name": "Artisan Build Construct", "oneliner": "Nashville DADU — custom uses", "interviewStatus": "unclaimed",
+    { "id": "b1-who-caliadv", "type": "WHO", "name": "Cali ADU", "oneliner": "SoCal ADU specialist — permits to keys", "interviewStatus": "unclaimed",
       "blocks": [
-        { "type": "assertion", "content": "Specializes in DADUs for varied uses: mother-in-law suites, music spaces, rentals. artisanbuildconstruct.com", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+        { "type": "assertion", "content": "ADU-focused GC serving LA and surrounding counties. caliadv.com. Likely doing high volume post-SB 9 — strong data point on how feasibility friction affects pipeline.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 380, "posY": 170 },
 
-    { "id": "b1-who-nashvillegarage", "type": "WHO", "name": "Nashville Garage Builders", "oneliner": "ADU / garage conversion specialist", "interviewStatus": "unclaimed",
+    { "id": "b1-who-adugenius", "type": "WHO", "name": "ADU Genius", "oneliner": "LA ADU builder — garage conversions + new builds", "interviewStatus": "unclaimed",
       "blocks": [
-        { "type": "assertion", "content": "Garage conversion and ADU specialist in Nashville. nashvillegaragebuilders.com", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+        { "type": "assertion", "content": "Specializes in garage conversions and new detached ADUs across LA metro. adugenius.com — key target to understand how often garage conversion feasibility is misassessed at first contact.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 420, "posY": 150 },
 
-    { "id": "b1-who-ascend", "type": "WHO", "name": "Ascend Federal Credit Union", "oneliner": "Nashville CU — HELOC lender", "interviewStatus": "unclaimed",
+    { "id": "b1-who-schoolsfirst", "type": "WHO", "name": "SchoolsFirst FCU", "oneliner": "Largest CA credit union — HELOC products", "interviewStatus": "unclaimed",
       "blocks": [
-        { "type": "assertion", "content": "Offers home equity loans 3–15 year terms. One of the larger Middle TN credit unions. ascend.org", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
-        { "type": "assertion", "content": "Loan officers here would understand HELOC friction, rejection rates, and homeowner education gaps.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+        { "type": "assertion", "content": "Largest credit union in California by assets, strong SoCal presence. Offers competitive HELOC products. schoolsfirstfcu.org — loan officers here would have deep insight into ADU borrower friction and approval gaps.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
+        { "type": "assertion", "content": "Key question: what % of HELOC applicants cite ADU construction as intended use? Do they see rejections due to appraisal shortfalls?", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 760, "posY": 160 },
 
-    { "id": "b1-who-usccu", "type": "WHO", "name": "US Community Credit Union", "oneliner": "Nashville CU — home equity loans", "interviewStatus": "unclaimed",
+    { "id": "b1-who-lafederal", "type": "WHO", "name": "LA Federal Credit Union", "oneliner": "LA-based CU — home equity loans", "interviewStatus": "unclaimed",
       "blocks": [
-        { "type": "assertion", "content": "Serves Nashville, Antioch, Mt. Juliet. Has written guides on HELOC process in Tennessee — likely sophisticated on borrower pain points.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+        { "type": "assertion", "content": "Credit union serving LA city employees and community. lafederal.org — good source for understanding how LA-specific borrowers experience the HELOC process for ADU projects.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 840, "posY": 210 },
 
-    { "id": "b1-who-enbright", "type": "WHO", "name": "Enbright Credit Union", "oneliner": "Nashville CU — HELOC products", "interviewStatus": "unclaimed",
+    { "id": "b1-who-calcreditunion", "type": "WHO", "name": "California Credit Union", "oneliner": "SoCal CU — HELOC and ADU financing", "interviewStatus": "unclaimed",
       "blocks": [
-        { "type": "assertion", "content": "Offers HELOC products in Nashville metro. enbrightcu.com", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+        { "type": "assertion", "content": "Serves the greater LA area. calcreditunion.com — has been active in promoting ADU financing products as SB 9 expanded eligibility.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 780, "posY": 270 },
 
-    { "id": "b1-who-wilsonbank", "type": "WHO", "name": "Wilson Bank", "oneliner": "Middle TN HELOC lender", "interviewStatus": "unclaimed",
+    { "id": "b1-who-pacificpremier", "type": "WHO", "name": "Pacific Premier Bank", "oneliner": "LA community bank — home equity products", "interviewStatus": "unclaimed",
       "blocks": [
-        { "type": "assertion", "content": "Middle Tennessee community bank with competitive HELOC rates. wilsonbank.com — strong local roots in outer Nashville suburbs.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+        { "type": "assertion", "content": "LA-area community bank with strong residential lending arm. pacificpremierbank.com — good for understanding how community lenders think about ADU construction risk and appraisal methodology.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 860, "posY": 150 },
 
-    { "id": "b1-who-hbamt", "type": "WHO", "name": "HBAMT", "oneliner": "Home Builders Assoc. of Middle Tennessee — gateway to 3,000+ members", "interviewStatus": "unclaimed",
+    { "id": "b1-who-biasc", "type": "WHO", "name": "BIASC", "oneliner": "Building Industry Assoc. of Southern California — gateway to 1,000+ builders", "interviewStatus": "unclaimed",
       "blocks": [
-        { "type": "assertion", "content": "Primary Nashville-area builder trade association. Member directory lists all licensed builders/contractors. hbamt.org — one conversation here could open 50 introductions.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+        { "type": "assertion", "content": "Primary builder trade association for Southern California. biasc.net — member directory covers licensed residential builders and GCs across LA, OC, and Inland Empire. One conversation here could unlock dozens of warm intros.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 280, "posY": 340 },
 
-    { "id": "b1-who-hbact", "type": "WHO", "name": "HBACT", "oneliner": "Home Builders Assoc. of Central Tennessee", "interviewStatus": "unclaimed",
+    { "id": "b1-who-cagla", "type": "WHO", "name": "CAGLA", "oneliner": "Contractors Association of Greater Los Angeles", "interviewStatus": "unclaimed",
       "blocks": [
-        { "type": "assertion", "content": "HBAT affiliate covering Central TN. hbact.info — secondary channel to HBAMT for builder intros.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+        { "type": "assertion", "content": "LA-focused contractor trade group. cagla.org — secondary channel to BIASC for GC intros, particularly smaller residential contractors active in ADU builds.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 340, "posY": 300 },
 
-    { "id": "b1-who-homeowner-eastnashville", "type": "WHO", "name": "East Nashville R1 Homeowner", "oneliner": "Archetype — high-density R1, rental demand", "interviewStatus": "unclaimed",
+    { "id": "b1-who-homeowner-silverlake", "type": "WHO", "name": "Silver Lake R1 Homeowner", "oneliner": "Archetype — high density, walkable, strong rental demand", "interviewStatus": "unclaimed",
       "blocks": [
-        { "type": "assertion", "content": "East Nashville has among the highest ADU interest in Metro Nashville — walkable, rising rents, older housing stock with large lots.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
-        { "type": "assertion", "content": "Key pain hypothesis: wants to add a DADU for rental income but doesn't know if their lot qualifies or what it costs.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+        { "type": "assertion", "content": "Silver Lake has among the highest ADU interest in LA — walkable, rising rents, older Craftsman and bungalow stock with detached garages ideal for conversion.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
+        { "type": "assertion", "content": "Key pain hypothesis: wants to add an ADU for rental income but doesn't know if their lot qualifies or what it costs. Lot sizes vary wildly — feasibility question is real.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 640, "posY": 340 },
 
-    { "id": "b1-who-homeowner-sylvanpark", "type": "WHO", "name": "Sylvan Park R1 Homeowner", "oneliner": "Archetype — established neighborhood, lot size varies", "interviewStatus": "unclaimed",
+    { "id": "b1-who-homeowner-midcity", "type": "WHO", "name": "Mid-City LA Homeowner", "oneliner": "Archetype — large lots, price-sensitive, rental income focus", "interviewStatus": "unclaimed",
       "blocks": [
-        { "type": "assertion", "content": "Sylvan Park has strong multigenerational living demand — parents moving in. Homeowners here likely to be 40–60yo, high equity.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+        { "type": "assertion", "content": "Mid-City and Jefferson Park have larger lot sizes than Eastside neighborhoods — strong ADU potential. Homeowners here are more price-sensitive and likely need clear ROI framing.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 700, "posY": 280 },
 
-    { "id": "b1-who-homeowner-germantown", "type": "WHO", "name": "Germantown R1 Homeowner", "oneliner": "Archetype — premium neighborhood, strong ROI motivation", "interviewStatus": "unclaimed",
+    { "id": "b1-who-homeowner-highlandpark", "type": "WHO", "name": "Highland Park R1 Homeowner", "oneliner": "Archetype — gentrifying area, renovation appetite, equity building", "interviewStatus": "unclaimed",
       "blocks": [
-        { "type": "assertion", "content": "Germantown homeowners have high equity and strong rental income motivation. Lots tend to be tighter — feasibility question is critical.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+        { "type": "assertion", "content": "Highland Park homeowners skew younger (30s–40s), bought recently, and are actively improving properties. High motivation to add ADU for income or multigenerational living. Lot feasibility is a real unknown for them.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 680, "posY": 400 },
 
-    { "id": "b1-what-nashville-dadu-zoning", "type": "WHAT", "name": "Nashville DADU Zoning (2025)", "oneliner": "Constraint — regulatory landscape",
+    { "id": "b1-what-la-adu-zoning", "type": "WHAT", "name": "LA ADU Regulations (2024–25)", "oneliner": "Constraint — regulatory landscape",
       "blocks": [
-        { "type": "assertion", "content": "Metro Council expanded DADU eligibility in 2025. Lots under 10k sqft: max 850 sqft unit. Lots 10k+ sqft: max 1,200 sqft. RS zoning requires DADU overlay district.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
-        { "type": "assertion", "content": "Ownership restriction: DADU must remain tied to principal dwelling — no subdivision.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+        { "type": "assertion", "content": "SB 9 (2022): allows lot splits + duplexes on R1. AB 2221 (2023): streamlines ADU permitting, removes discretionary review. LA city ADU ordinance: allows ADUs up to 1,200 sqft on most R1 lots, junior ADUs (JADU) up to 500 sqft inside existing structure.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
+        { "type": "assertion", "content": "Key wrinkle: setbacks, lot coverage, and fire access requirements still create eligibility complexity — exactly the problem BackyardOne solves. Many homeowners and even GCs don't know what's actually allowed.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 500, "posY": 180 },
 
-    { "id": "b1-what-heloc-products", "type": "WHAT", "name": "HELOC Products", "oneliner": "Financing mechanism",
+    { "id": "b1-what-heloc-products", "type": "WHAT", "name": "ADU Financing Products", "oneliner": "Financing mechanism",
       "blocks": [
-        { "type": "assertion", "content": "Primary financing vehicle for ADU construction. Nashville HELOC rates ~8.5% as of Feb 2026, tracking prime rate.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
-        { "type": "assertion", "content": "CalHFA-equivalent TN programs not confirmed. Key question: is financing friction a real blocker or a knowledge gap?", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+        { "type": "assertion", "content": "Primary vehicle: HELOC (~8–9% in CA as of early 2026, tracking prime). CalHFA ADU Grant: $40k forgivable grant for low-income owners — real program, underutilized due to awareness gap.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
+        { "type": "assertion", "content": "Key question: is financing friction a real blocker or a knowledge gap? CalHFA grant awareness is low even among GCs — opportunity to surface this in the product.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 820, "posY": 340 },
 
     { "id": "b1-what-homeowner-pain", "type": "WHAT", "name": "Homeowner Pain Points", "oneliner": "Validated research — ADU barriers",
       "blocks": [
         { "type": "assertion", "content": "#1 barrier: cost uncertainty. #2: permitting/regulatory confusion. Typical homeowner spends 3–6 months researching before contacting first contractor.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
-        { "type": "validation", "content": "Source: academic survey of Sacramento metro homeowners (Tandfonline, 2022) + 2025 ADU West Coast market report.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
+        { "type": "validation", "content": "Source: academic survey of Sacramento metro homeowners (Tandfonline, 2022) + 2025 ADU West Coast market report. LA market expected to mirror findings.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 600, "posY": 220 },
 
     { "id": "b1-whatif-automated-feasibility", "type": "WHAT_IF", "name": "Automated Feasibility Engine", "oneliner": "Core product hypothesis",
       "blocks": [
-        { "type": "hypothesis", "content": "If a homeowner gets an instant, accurate feasibility report for their lot in under 60 seconds, conversion to paid services increases significantly.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
+        { "type": "hypothesis", "content": "If a homeowner gets an instant, accurate feasibility report for their LA lot in under 60 seconds, conversion to paid services increases significantly.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
         { "type": "status", "content": "Active — building v0 prototype", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 560, "posY": 380 },
 
     { "id": "b1-whatif-builders-parcel-data", "type": "WHAT_IF", "name": "Builders pay for parcel data", "oneliner": "PMF hypothesis — B2B angle",
       "blocks": [
-        { "type": "hypothesis", "content": "If a builder can identify feasible lots 10x faster using BackyardOne data, they will pay for access — even outside LA.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
+        { "type": "hypothesis", "content": "If a GC can identify feasible LA lots 10x faster using BackyardOne data, they will pay for access — recurring subscription model.", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" },
         { "type": "status", "content": "Untested — customer discovery in progress", "col1": "", "col2": "", "outcome": "", "date": "", "notes": "", "field6": "" }
       ], "photo": null, "emotions": null, "datetime": null, "posX": 360, "posY": 400 }
   ],
   "communities": [
-    { "id": "b1-comm-nashville-gcs", "type": "COMMUNITY", "name": "Nashville GCs", "oneliner": "General contractors building DADUs in Nashville", "blocks": [], "photo": null, "emotions": null, "datetime": null, "trinityState": "WHO", "posX": 280, "posY": 200 },
-    { "id": "b1-comm-nashville-builders", "type": "COMMUNITY", "name": "Nashville Builders", "oneliner": "Residential builders — HBAMT members", "blocks": [], "photo": null, "emotions": null, "datetime": null, "trinityState": "WHO", "posX": 200, "posY": 300 },
-    { "id": "b1-comm-heloc-lenders", "type": "COMMUNITY", "name": "Nashville HELOC Lenders", "oneliner": "Credit unions and banks offering home equity products", "blocks": [], "photo": null, "emotions": null, "datetime": null, "trinityState": "WHO", "posX": 820, "posY": 240 },
-    { "id": "b1-comm-homeowners", "type": "COMMUNITY", "name": "Nashville R1 Homeowners", "oneliner": "Target homeowners with ADU-eligible lots", "blocks": [], "photo": null, "emotions": null, "datetime": null, "trinityState": "WHO", "posX": 680, "posY": 200 },
-    { "id": "b1-comm-team", "type": "COMMUNITY", "name": "BackyardOne Team", "oneliner": "MBAs running customer discovery", "blocks": [], "photo": null, "emotions": null, "datetime": null, "trinityState": "WHO", "posX": 520, "posY": 460 }
+    { "id": "b1-comm-la-gcs",       "type": "COMMUNITY", "name": "LA GCs",             "oneliner": "General contractors building ADUs in Los Angeles", "blocks": [], "photo": null, "emotions": null, "datetime": null, "trinityState": "WHO", "posX": 280, "posY": 200 },
+    { "id": "b1-comm-la-builders",  "type": "COMMUNITY", "name": "LA Builders",        "oneliner": "Residential builders — BIASC members", "blocks": [], "photo": null, "emotions": null, "datetime": null, "trinityState": "WHO", "posX": 200, "posY": 300 },
+    { "id": "b1-comm-heloc-lenders","type": "COMMUNITY", "name": "LA HELOC Lenders",   "oneliner": "Credit unions and banks offering home equity products in SoCal", "blocks": [], "photo": null, "emotions": null, "datetime": null, "trinityState": "WHO", "posX": 820, "posY": 240 },
+    { "id": "b1-comm-homeowners",   "type": "COMMUNITY", "name": "LA R1 Homeowners",   "oneliner": "Target homeowners with ADU-eligible lots in LA", "blocks": [], "photo": null, "emotions": null, "datetime": null, "trinityState": "WHO", "posX": 680, "posY": 200 },
+    { "id": "b1-comm-team",         "type": "COMMUNITY", "name": "BackyardOne Team",   "oneliner": "MBAs running customer discovery", "blocks": [], "photo": null, "emotions": null, "datetime": null, "trinityState": "WHO", "posX": 520, "posY": 460 }
   ],
   "connections": [
-    { "id": "b1-c-team-1", "fromId": "b1-comm-team", "toId": "team-adele", "edgeLabel": "MEMBER", "bidirectional": false },
-    { "id": "b1-c-team-2", "fromId": "b1-comm-team", "toId": "team-carter", "edgeLabel": "MEMBER", "bidirectional": false },
-    { "id": "b1-c-team-3", "fromId": "b1-comm-team", "toId": "team-peter", "edgeLabel": "MEMBER", "bidirectional": false },
-    { "id": "b1-c-team-4", "fromId": "b1-comm-team", "toId": "team-dale", "edgeLabel": "MEMBER", "bidirectional": false },
-    { "id": "b1-c-team-5", "fromId": "b1-comm-team", "toId": "team-austin", "edgeLabel": "MEMBER", "bidirectional": false },
-    { "id": "b1-c-team-6", "fromId": "b1-comm-team", "toId": "team-libby", "edgeLabel": "MEMBER", "bidirectional": false },
-    { "id": "b1-c-team-7", "fromId": "b1-comm-team", "toId": "team-connor", "edgeLabel": "MEMBER", "bidirectional": false },
-    { "id": "b1-c-team-8", "fromId": "b1-comm-team", "toId": "team-tobasum", "edgeLabel": "MEMBER", "bidirectional": false },
-    { "id": "b1-c-team-9", "fromId": "b1-comm-team", "toId": "team-mark", "edgeLabel": "MEMBER", "bidirectional": false },
+    { "id": "b1-c-team-1",  "fromId": "b1-comm-team", "toId": "team-adele",   "edgeLabel": "MEMBER", "bidirectional": false },
+    { "id": "b1-c-team-2",  "fromId": "b1-comm-team", "toId": "team-carter",  "edgeLabel": "MEMBER", "bidirectional": false },
+    { "id": "b1-c-team-3",  "fromId": "b1-comm-team", "toId": "team-peter",   "edgeLabel": "MEMBER", "bidirectional": false },
+    { "id": "b1-c-team-4",  "fromId": "b1-comm-team", "toId": "team-dale",    "edgeLabel": "MEMBER", "bidirectional": false },
+    { "id": "b1-c-team-5",  "fromId": "b1-comm-team", "toId": "team-austin",  "edgeLabel": "MEMBER", "bidirectional": false },
+    { "id": "b1-c-team-6",  "fromId": "b1-comm-team", "toId": "team-libby",   "edgeLabel": "MEMBER", "bidirectional": false },
+    { "id": "b1-c-team-7",  "fromId": "b1-comm-team", "toId": "team-connor",  "edgeLabel": "MEMBER", "bidirectional": false },
+    { "id": "b1-c-team-8",  "fromId": "b1-comm-team", "toId": "team-tobasum", "edgeLabel": "MEMBER", "bidirectional": false },
+    { "id": "b1-c-team-9",  "fromId": "b1-comm-team", "toId": "team-mark",    "edgeLabel": "MEMBER", "bidirectional": false },
     { "id": "b1-c-team-10", "fromId": "b1-comm-team", "toId": "team-michael", "edgeLabel": "MEMBER", "bidirectional": false },
 
-    { "id": "b1-c-gc-1", "fromId": "b1-who-cranebuilders",      "toId": "b1-comm-nashville-gcs", "edgeLabel": "BELONGS_TO", "bidirectional": false },
-    { "id": "b1-c-gc-2", "fromId": "b1-who-urcovered",          "toId": "b1-comm-nashville-gcs", "edgeLabel": "BELONGS_TO", "bidirectional": false },
-    { "id": "b1-c-gc-3", "fromId": "b1-who-buildco7",           "toId": "b1-comm-nashville-gcs", "edgeLabel": "BELONGS_TO", "bidirectional": false },
-    { "id": "b1-c-gc-4", "fromId": "b1-who-musiccityremodels",  "toId": "b1-comm-nashville-gcs", "edgeLabel": "BELONGS_TO", "bidirectional": false },
-    { "id": "b1-c-gc-5", "fromId": "b1-who-dancompany",         "toId": "b1-comm-nashville-gcs", "edgeLabel": "BELONGS_TO", "bidirectional": false },
-    { "id": "b1-c-gc-6", "fromId": "b1-who-artisan",            "toId": "b1-comm-nashville-gcs", "edgeLabel": "BELONGS_TO", "bidirectional": false },
-    { "id": "b1-c-gc-7", "fromId": "b1-who-nashvillegarage",    "toId": "b1-comm-nashville-gcs", "edgeLabel": "BELONGS_TO", "bidirectional": false },
+    { "id": "b1-c-gc-1", "fromId": "b1-who-actonadv",       "toId": "b1-comm-la-gcs", "edgeLabel": "BELONGS_TO", "bidirectional": false },
+    { "id": "b1-c-gc-2", "fromId": "b1-who-uniteddwelling",  "toId": "b1-comm-la-gcs", "edgeLabel": "BELONGS_TO", "bidirectional": false },
+    { "id": "b1-c-gc-3", "fromId": "b1-who-abodu",           "toId": "b1-comm-la-gcs", "edgeLabel": "BELONGS_TO", "bidirectional": false },
+    { "id": "b1-c-gc-4", "fromId": "b1-who-maxable",         "toId": "b1-comm-la-gcs", "edgeLabel": "BELONGS_TO", "bidirectional": false },
+    { "id": "b1-c-gc-5", "fromId": "b1-who-villabuilders",   "toId": "b1-comm-la-gcs", "edgeLabel": "BELONGS_TO", "bidirectional": false },
+    { "id": "b1-c-gc-6", "fromId": "b1-who-caliadv",         "toId": "b1-comm-la-gcs", "edgeLabel": "BELONGS_TO", "bidirectional": false },
+    { "id": "b1-c-gc-7", "fromId": "b1-who-adugenius",       "toId": "b1-comm-la-gcs", "edgeLabel": "BELONGS_TO", "bidirectional": false },
 
-    { "id": "b1-c-hbamt-1", "fromId": "b1-who-hbamt", "toId": "b1-comm-nashville-builders", "edgeLabel": "REPRESENTS", "bidirectional": false },
-    { "id": "b1-c-hbact-1", "fromId": "b1-who-hbact", "toId": "b1-comm-nashville-builders", "edgeLabel": "REPRESENTS", "bidirectional": false },
+    { "id": "b1-c-biasc-1", "fromId": "b1-who-biasc",  "toId": "b1-comm-la-builders", "edgeLabel": "REPRESENTS", "bidirectional": false },
+    { "id": "b1-c-cagla-1", "fromId": "b1-who-cagla",  "toId": "b1-comm-la-builders", "edgeLabel": "REPRESENTS", "bidirectional": false },
 
-    { "id": "b1-c-cu-1", "fromId": "b1-who-ascend",   "toId": "b1-comm-heloc-lenders", "edgeLabel": "BELONGS_TO", "bidirectional": false },
-    { "id": "b1-c-cu-2", "fromId": "b1-who-usccu",    "toId": "b1-comm-heloc-lenders", "edgeLabel": "BELONGS_TO", "bidirectional": false },
-    { "id": "b1-c-cu-3", "fromId": "b1-who-enbright", "toId": "b1-comm-heloc-lenders", "edgeLabel": "BELONGS_TO", "bidirectional": false },
-    { "id": "b1-c-cu-4", "fromId": "b1-who-wilsonbank","toId": "b1-comm-heloc-lenders", "edgeLabel": "BELONGS_TO", "bidirectional": false },
+    { "id": "b1-c-cu-1", "fromId": "b1-who-schoolsfirst",    "toId": "b1-comm-heloc-lenders", "edgeLabel": "BELONGS_TO", "bidirectional": false },
+    { "id": "b1-c-cu-2", "fromId": "b1-who-lafederal",       "toId": "b1-comm-heloc-lenders", "edgeLabel": "BELONGS_TO", "bidirectional": false },
+    { "id": "b1-c-cu-3", "fromId": "b1-who-calcreditunion",  "toId": "b1-comm-heloc-lenders", "edgeLabel": "BELONGS_TO", "bidirectional": false },
+    { "id": "b1-c-cu-4", "fromId": "b1-who-pacificpremier",  "toId": "b1-comm-heloc-lenders", "edgeLabel": "BELONGS_TO", "bidirectional": false },
 
-    { "id": "b1-c-ho-1", "fromId": "b1-who-homeowner-eastnashville", "toId": "b1-comm-homeowners", "edgeLabel": "BELONGS_TO", "bidirectional": false },
-    { "id": "b1-c-ho-2", "fromId": "b1-who-homeowner-sylvanpark",    "toId": "b1-comm-homeowners", "edgeLabel": "BELONGS_TO", "bidirectional": false },
-    { "id": "b1-c-ho-3", "fromId": "b1-who-homeowner-germantown",    "toId": "b1-comm-homeowners", "edgeLabel": "BELONGS_TO", "bidirectional": false },
+    { "id": "b1-c-ho-1", "fromId": "b1-who-homeowner-silverlake",   "toId": "b1-comm-homeowners", "edgeLabel": "BELONGS_TO", "bidirectional": false },
+    { "id": "b1-c-ho-2", "fromId": "b1-who-homeowner-midcity",      "toId": "b1-comm-homeowners", "edgeLabel": "BELONGS_TO", "bidirectional": false },
+    { "id": "b1-c-ho-3", "fromId": "b1-who-homeowner-highlandpark", "toId": "b1-comm-homeowners", "edgeLabel": "BELONGS_TO", "bidirectional": false },
 
-    { "id": "b1-c-z-1", "fromId": "b1-what-nashville-dadu-zoning",  "toId": "b1-whatif-automated-feasibility", "edgeLabel": "INPUTS_TO", "bidirectional": false },
-    { "id": "b1-c-z-2", "fromId": "b1-what-homeowner-pain",         "toId": "b1-whatif-automated-feasibility", "edgeLabel": "MOTIVATES", "bidirectional": false },
-    { "id": "b1-c-z-3", "fromId": "b1-what-heloc-products",         "toId": "b1-whatif-automated-feasibility", "edgeLabel": "ENABLES", "bidirectional": false },
-    { "id": "b1-c-z-4", "fromId": "b1-whatif-automated-feasibility","toId": "b1-whatif-builders-parcel-data",  "edgeLabel": "RELATED_TO", "bidirectional": false },
-    { "id": "b1-c-z-5", "fromId": "b1-comm-homeowners",             "toId": "b1-what-homeowner-pain",          "edgeLabel": "EXPERIENCES", "bidirectional": false },
-    { "id": "b1-c-z-6", "fromId": "b1-comm-homeowners",             "toId": "b1-what-heloc-products",          "edgeLabel": "USES", "bidirectional": false },
-    { "id": "b1-c-z-7", "fromId": "b1-comm-nashville-gcs",          "toId": "b1-what-nashville-dadu-zoning",   "edgeLabel": "CONSTRAINED_BY", "bidirectional": false },
-    { "id": "b1-c-z-8", "fromId": "b1-comm-nashville-gcs",          "toId": "b1-whatif-builders-parcel-data",  "edgeLabel": "POTENTIAL_BUYER", "bidirectional": false }
+    { "id": "b1-c-z-1", "fromId": "b1-what-la-adu-zoning",         "toId": "b1-whatif-automated-feasibility", "edgeLabel": "INPUTS_TO",       "bidirectional": false },
+    { "id": "b1-c-z-2", "fromId": "b1-what-homeowner-pain",        "toId": "b1-whatif-automated-feasibility", "edgeLabel": "MOTIVATES",        "bidirectional": false },
+    { "id": "b1-c-z-3", "fromId": "b1-what-heloc-products",        "toId": "b1-whatif-automated-feasibility", "edgeLabel": "ENABLES",          "bidirectional": false },
+    { "id": "b1-c-z-4", "fromId": "b1-whatif-automated-feasibility","toId": "b1-whatif-builders-parcel-data", "edgeLabel": "RELATED_TO",       "bidirectional": false },
+    { "id": "b1-c-z-5", "fromId": "b1-comm-homeowners",            "toId": "b1-what-homeowner-pain",          "edgeLabel": "EXPERIENCES",      "bidirectional": false },
+    { "id": "b1-c-z-6", "fromId": "b1-comm-homeowners",            "toId": "b1-what-heloc-products",          "edgeLabel": "USES",             "bidirectional": false },
+    { "id": "b1-c-z-7", "fromId": "b1-comm-la-gcs",                "toId": "b1-what-la-adu-zoning",           "edgeLabel": "CONSTRAINED_BY",   "bidirectional": false },
+    { "id": "b1-c-z-8", "fromId": "b1-comm-la-gcs",                "toId": "b1-whatif-builders-parcel-data",  "edgeLabel": "POTENTIAL_BUYER",  "bidirectional": false }
   ],
   "dailyCards": [],
   "dailyTasks": []
