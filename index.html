@@ -1459,6 +1459,46 @@
         .tdp-input:focus { border-color:#1a73e8; }
         .tdp-textarea { width:100%; padding:9px 10px; border-radius:6px; border:1px solid var(--tv-border2); background:#fff; color:var(--tv-text); font-size:13px; resize:vertical; box-sizing:border-box; font-family:inherit; outline:none; min-height:90px; transition:border-color .15s; }
         .tdp-textarea:focus { border-color:#1a73e8; }
+
+        /* ── Signal chips (resistance, status, WTP, referral, resistance type) ── */
+        .sig-chips { display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
+        .sig-chip { padding:4px 11px; border-radius:12px; border:1.5px solid #dadce0; background:#fff; color:#5f6368; font-size:11px; font-weight:500; cursor:pointer; transition:all .15s; white-space:nowrap; }
+        .sig-chip:hover { border-color:#9aa0a6; }
+        .sig-chip.active { border-color:transparent !important; color:#fff !important; }
+        .sig-chip.active.c-low,.sig-chip.active.c-strong,.sig-chip.active.c-yes,.sig-chip.active.c-validated { background:#34a853; }
+        .sig-chip.active.c-med,.sig-chip.active.c-weak,.sig-chip.active.c-testing { background:#f9ab00; }
+        .sig-chip.active.c-high,.sig-chip.active.c-none,.sig-chip.active.c-invalidated,.sig-chip.active.c-no { background:#ea4335; }
+        .sig-chip.active.c-untested { background:#9e9e9e; }
+        .sig-chip.active.c-price { background:#ea4335; }
+        .sig-chip.active.c-awareness { background:#1a73e8; }
+        .sig-chip.active.c-trust { background:#7c5cbf; }
+        .sig-chip.active.c-inertia { background:#a68b5b; }
+
+        /* ── Links array ── */
+        .link-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+        .link-chip { display:inline-flex; align-items:center; gap:4px; padding:4px 9px; border-radius:12px; background:#e8f0fe; color:#1a73e8; font-size:11px; font-weight:500; text-decoration:none; border:1px solid #c5d5f8; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .link-chip-x { background:none; border:none; color:#1a73e8; cursor:pointer; padding:0 0 0 2px; font-size:14px; line-height:1; opacity:.7; flex-shrink:0; }
+        .link-chip-x:hover { opacity:1; }
+        .link-add-row { display:flex; gap:5px; margin-top:8px; }
+        .link-add-row input { flex:1; padding:7px 8px; border-radius:6px; border:1px solid var(--tv-border2); background:#fff; font-size:12px; font-family:inherit; outline:none; min-width:0; }
+        .link-add-row input:focus { border-color:#1a73e8; }
+        .link-add-row button { padding:7px 10px; background:#1a73e8; color:#fff; border:none; border-radius:6px; font-size:12px; cursor:pointer; white-space:nowrap; flex-shrink:0; }
+        .link-add-row button:hover { background:#1557b0; }
+
+        /* ── Hypothesis scoreboard in sidebar ── */
+        .sb-section { margin-top:14px; padding-top:14px; border-top:1px solid var(--tv-border); }
+        .sb-title { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--tv-text-muted); margin-bottom:8px; }
+        .sb-item { padding:8px 10px; border-radius:8px; background:#fff; border:1px solid var(--tv-border); margin-bottom:6px; cursor:pointer; transition:box-shadow .15s; }
+        .sb-item:hover { box-shadow:0 2px 6px rgba(0,0,0,.1); }
+        .sb-item-name { font-size:12px; font-weight:600; color:#202124; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .sb-item-meta { display:flex; gap:5px; align-items:center; flex-wrap:wrap; }
+        .sb-badge { padding:2px 7px; border-radius:10px; font-size:10px; font-weight:600; color:#fff; }
+        .sb-count { font-size:10px; color:#5f6368; }
+        .sb-wtp { font-size:10px; color:#5f6368; font-style:italic; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+        /* ── Vertical section divider in detail panel ── */
+        .tdp-section { margin-top:14px; padding-top:14px; border-top:1px solid var(--tv-border); }
+        .tdp-section-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--tv-text-muted); margin-bottom:6px; }
     </style>
 </head>
 <body>
@@ -2150,6 +2190,10 @@
                 <button class="btn btn-secondary" onclick="exportGraphJSON()" style="margin-bottom:4px;font-size:11px">Export JSON</button>
                 <button class="btn btn-secondary" onclick="openJsonPaste()" style="font-size:11px">Import JSON</button>
                 <div class="tl-hint">Click → details<br>Double-click → rename<br>Drag → move<br>Connect → draw edges</div>
+                <div class="sb-section">
+                    <div class="sb-title">Hypothesis Scoreboard</div>
+                    <div id="scoreboard"></div>
+                </div>
             </div>
             <div class="trinity-graph-area">
                 <div id="trinityGraphContainer"></div>
@@ -2561,6 +2605,7 @@
                 renderFieldNotes();
             } else if (isTrinity) {
                 renderTrinityGraph();
+                renderScoreboard();
             } else {
                 document.getElementById('boardContainer').className = `board-container view-${view}`;
                 document.getElementById('sketchCanvas').style.display = isMap ? '' : 'none';
@@ -2720,6 +2765,7 @@
             localStorage.setItem('b1Tasks', JSON.stringify(dailyTasks));
             localStorage.setItem('b1Communities', JSON.stringify(communities));
             localStorage.setItem('b1Connections', JSON.stringify(connections));
+            renderScoreboard();
             showSyncStatus('saving');
             try {
                 db.collection('backyardone_discovery').doc('shared').set({ cards, dailyTasks, communities, connections }, { merge: true })
@@ -4146,7 +4192,9 @@
             const typeColors = { WHO:'#4a7fb5', WHAT:'#5a9e6f', WHAT_IF:'#7c5cbf', SITUATION:'#a68b5b', COMMUNITY:'#c0392b', person:'#4a7fb5', situation:'#a68b5b' };
             const src = [...cards, ...communities].find(x => x.id === nodeData.id);
             if (!src) return;
-            const connList = connections
+
+            // ── Connection list ──
+            const connItems = connections
                 .filter(c => c.fromId === src.id || c.toId === src.id)
                 .map(c => {
                     const otherId = c.fromId === src.id ? c.toId : c.fromId;
@@ -4154,76 +4202,159 @@
                     const verb = c.edgeLabel ? ` <span style="color:var(--tv-text-muted);font-style:italic">${c.edgeLabel.replace(/_/g,' ')}</span>` : '';
                     return other ? `• ${escapeHtml(other.name)}${verb}` : '';
                 }).filter(Boolean);
-            const blocks = (src.blocks || []).slice(0, 3).map(b => {
-                const content = b.content || b.col1 || '';
-                if (!content) return '';
-                const allTemplates = Object.assign({}, ...Object.values(blockTemplates));
-                const tmpl = allTemplates[b.type] || {};
-                return `<div class="tdp-block"><div class="tdp-block-label">${tmpl.label || b.type}</div><div class="tdp-block-content">${escapeHtml(content.slice(0,150))}${content.length>150?'…':''}</div></div>`;
-            }).join('');
 
-            // Soft-claim UI for interview target nodes
-            const isInterviewTarget = src.interviewStatus !== undefined;
-            let claimUI = '';
-            if (isInterviewTarget) {
+            // ── Chip builder helper ──
+            function chips(nodeId, field, current, opts) {
+                return opts.map(([val, label, cls]) =>
+                    `<button class="sig-chip ${current===val?'active '+cls:''}" onclick="setNodeSignal('${nodeId}','${field}','${val}')">${label}</button>`
+                ).join('');
+            }
+
+            // ── Links section (all node types) ──
+            function linksSection(node) {
+                const links = node.links || [];
+                const chipHtml = links.map((l, i) =>
+                    `<a href="${escapeHtml(l.url)}" target="_blank" class="link-chip" title="${escapeHtml(l.url)}">${escapeHtml(l.label||l.url)}<button class="link-chip-x" onclick="event.preventDefault();removeNodeLink('${node.id}',${i})">×</button></a>`
+                ).join('');
+                return `<div class="tdp-section">
+                    <div class="tdp-section-label">Links</div>
+                    <div class="link-chips">${chipHtml||'<span style="font-size:11px;color:var(--tv-text-muted)">None yet</span>'}</div>
+                    <div class="link-add-row">
+                        <input id="linkLabelInput" type="text" placeholder="Label (optional)">
+                        <input id="linkUrlInput" type="url" placeholder="https://…">
+                        <button onclick="addNodeLink('${node.id}')">+ Add</button>
+                    </div>
+                </div>`;
+            }
+
+            // ── Type-specific sections ──
+            let typeSection = '';
+
+            if (src.type === 'WHAT_IF') {
+                // Auto-count interview connections
+                const sitCount = connections.filter(c => {
+                    const othId = c.fromId === src.id ? c.toId : (c.toId === src.id ? c.fromId : null);
+                    const n = othId && cards.find(x => x.id === othId);
+                    return n && n.type === 'SITUATION';
+                }).length;
+                typeSection = `
+                    <div class="tdp-section">
+                        <div class="tdp-section-label">Hypothesis Status</div>
+                        <div class="sig-chips">${chips(src.id, 'hypoStatus', src.hypoStatus||'untested', [
+                            ['untested','Untested','c-untested'],['testing','Testing','c-testing'],
+                            ['validated','Validated','c-validated'],['invalidated','Invalidated','c-invalidated']
+                        ])}</div>
+                    </div>
+                    <div class="tdp-section">
+                        <div class="tdp-section-label">Resistance <span style="font-weight:400;color:var(--tv-text-muted);font-style:italic">— how hard is it to sell?</span></div>
+                        <div class="sig-chips">${chips(src.id, 'resistance', src.resistance, [
+                            ['low','🟢 Low','c-low'],['med','🟡 Med','c-med'],['high','🔴 High','c-high']
+                        ])}</div>
+                    </div>
+                    <div class="tdp-section">
+                        <div class="tdp-section-label">Strongest WTP signal <span style="font-weight:400;color:var(--tv-text-muted);font-style:italic">— verbatim quote</span></div>
+                        <textarea class="tdp-textarea" style="min-height:64px;font-size:12px" placeholder="e.g. "I'd pay $500/mo for this today"" onblur="saveSignalField('${src.id}','wtpSignal',this)">${escapeHtml(src.wtpSignal||'')}</textarea>
+                    </div>
+                    <div class="tdp-section" style="display:flex;align-items:center;gap:8px">
+                        <div class="tdp-section-label" style="margin:0">Interviews linked:</div>
+                        <span style="font-size:14px;font-weight:600;color:#1a73e8">${sitCount}</span>
+                        <span style="font-size:11px;color:var(--tv-text-muted)">(SITUATION nodes connected)</span>
+                    </div>`;
+            } else if (src.type === 'SITUATION') {
+                // Build "tests hypothesis" dropdown
+                const whatIfs = cards.filter(x => x.type === 'WHAT_IF');
+                const hypoOpts = whatIfs.map(h =>
+                    `<option value="${h.id}" ${connections.find(c=>(c.fromId===src.id&&c.toId===h.id)||(c.toId===src.id&&c.fromId===h.id))? 'disabled':''}>
+                        ${escapeHtml(h.name)}${connections.find(c=>(c.fromId===src.id&&c.toId===h.id)||(c.toId===src.id&&c.fromId===h.id))?' ✓':''}
+                    </option>`
+                ).join('');
+                typeSection = `
+                    <div class="tdp-section">
+                        <div class="tdp-section-label">Verbatim quote <span style="font-weight:400;color:var(--tv-text-muted);font-style:italic">— the single most important thing they said</span></div>
+                        <textarea class="tdp-textarea" style="min-height:64px;font-size:12px" placeholder="Their exact words…" onblur="saveSignalField('${src.id}','verbatim',this)">${escapeHtml(src.verbatim||'')}</textarea>
+                    </div>
+                    <div class="tdp-section">
+                        <div class="tdp-section-label">WTP signal</div>
+                        <div class="sig-chips">${chips(src.id, 'wtpStrength', src.wtpStrength, [
+                            ['strong','💰 Strong','c-strong'],['weak','〰 Weak','c-weak'],['none','✗ None','c-none']
+                        ])}</div>
+                    </div>
+                    <div class="tdp-section">
+                        <div class="tdp-section-label">Referral? <span style="font-weight:400;color:var(--tv-text-muted);font-style:italic">— gave you another name to talk to</span></div>
+                        <div class="sig-chips">${chips(src.id, 'referral', src.referral, [
+                            ['yes','👥 Yes — strongest PMF signal','c-yes'],['no','No','c-no']
+                        ])}</div>
+                    </div>
+                    <div class="tdp-section">
+                        <div class="tdp-section-label">Resistance type</div>
+                        <div class="sig-chips">${chips(src.id, 'resistanceType', src.resistanceType, [
+                            ['price','💰 Price','c-price'],['awareness','📣 Awareness','c-awareness'],
+                            ['trust','🤝 Trust','c-trust'],['inertia','😴 Inertia','c-inertia']
+                        ])}</div>
+                    </div>
+                    ${whatIfs.length ? `<div class="tdp-section">
+                        <div class="tdp-section-label">Tests hypothesis</div>
+                        <div style="display:flex;gap:6px;margin-top:6px">
+                            <select id="testsHypoSelect" class="tdp-input" style="flex:1">
+                                <option value="">Select hypothesis…</option>
+                                ${hypoOpts}
+                            </select>
+                            <button onclick="linkToHypothesis('${src.id}')" style="padding:8px 12px;background:#7c5cbf;color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer;white-space:nowrap">Link →</button>
+                        </div>
+                    </div>` : ''}`;
+            } else if (src.interviewStatus !== undefined) {
+                // WHO interview target — claim workflow
                 const status = src.interviewStatus || 'unclaimed';
                 const statusBadge = {
                     unclaimed: `<span style="display:inline-block;padding:3px 10px;border-radius:12px;background:#9E9E9E;color:#fff;font-size:11px;font-weight:600;letter-spacing:.05em">UNCLAIMED</span>`,
                     claimed:   `<span style="display:inline-block;padding:3px 10px;border-radius:12px;background:#FFC107;color:#000;font-size:11px;font-weight:600;letter-spacing:.05em">CLAIMED</span>`,
                     completed: `<span style="display:inline-block;padding:3px 10px;border-radius:12px;background:#4CAF50;color:#fff;font-size:11px;font-weight:600;letter-spacing:.05em">COMPLETED</span>`,
                 }[status] || '';
-
                 if (status === 'unclaimed') {
                     const opts = TEAM_MEMBERS.map(n => `<option value="${n}">${n}</option>`).join('');
-                    claimUI = `
-                        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--tv-border)">
-                            ${statusBadge}
-                            <div style="margin-top:12px;font-size:12px;color:var(--tv-text-muted);margin-bottom:6px">Who's taking this interview?</div>
-                            <select id="claimNameSelect" class="tdp-input" style="margin-bottom:8px">
-                                <option value="">Select your name…</option>
-                                ${opts}
-                            </select>
-                            <button onclick="claimInterview('${src.id}')" class="tdp-primary-btn">Claim Interview →</button>
-                        </div>`;
+                    typeSection = `<div class="tdp-section">
+                        ${statusBadge}
+                        <div style="margin-top:12px;font-size:12px;color:var(--tv-text-muted);margin-bottom:6px">Who's taking this interview?</div>
+                        <select id="claimNameSelect" class="tdp-input" style="margin-bottom:8px"><option value="">Select your name…</option>${opts}</select>
+                        <button onclick="claimInterview('${src.id}')" class="tdp-primary-btn">Claim Interview →</button>
+                    </div>`;
                 } else if (status === 'claimed') {
-                    claimUI = `
-                        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--tv-border)">
-                            ${statusBadge}
-                            <div style="margin-top:8px;font-size:13px">Claimed by <strong style="color:#4a9eff">${escapeHtml(src.owner || '')}</strong></div>
-                            <div style="margin-top:10px;font-size:12px;color:var(--tv-text-muted);margin-bottom:6px">Paste your interview notes:</div>
-                            <textarea id="interviewNotes" class="tdp-textarea" placeholder="Key quotes, findings, pain points…"></textarea>
-                            <input id="interviewLink" type="url" class="tdp-input" placeholder="Doc / Notion / Loom link (optional)" style="margin-top:8px">
-                            <button onclick="completeInterview('${src.id}')" class="tdp-primary-btn" style="background:#34a853" onmouseover="this.style.background='#2d8e47'" onmouseout="this.style.background='#34a853'">Mark Complete ✓</button>
-                        </div>`;
+                    typeSection = `<div class="tdp-section">
+                        ${statusBadge}
+                        <div style="margin-top:8px;font-size:13px">Claimed by <strong style="color:#4a9eff">${escapeHtml(src.owner||'')}</strong></div>
+                        <div style="margin-top:10px;font-size:12px;color:var(--tv-text-muted);margin-bottom:6px">Paste your interview notes:</div>
+                        <textarea id="interviewNotes" class="tdp-textarea" placeholder="Key quotes, findings, pain points…"></textarea>
+                        <input id="interviewLink" type="url" class="tdp-input" placeholder="Doc / Notion / Loom link (optional)" style="margin-top:8px">
+                        <button onclick="completeInterview('${src.id}')" class="tdp-primary-btn" style="background:#34a853">Mark Complete ✓</button>
+                    </div>`;
                 } else if (status === 'completed') {
-                    const notesBlocks = (src.blocks || []).filter(b => b.col1 && TEAM_MEMBERS.includes(b.col1)).map((b, i) =>
+                    const notesBlocks = (src.blocks||[]).filter(b => b.col1 && TEAM_MEMBERS.includes(b.col1)).map((b,i) =>
                         `<div style="margin-top:8px;padding:10px;border-radius:8px;background:var(--tv-btn-bg);border:1px solid var(--tv-border)">
                             <div style="font-size:11px;color:#1a73e8;font-weight:600;margin-bottom:6px">${escapeHtml(b.col1)} · ${b.col2||''}</div>
                             <textarea class="tdp-textarea" style="min-height:70px;font-size:12px" data-block-idx="${i}" onblur="saveNodeBlock('${src.id}',this)">${escapeHtml(b.content||'')}</textarea>
-                            ${b.notes ? `<a href="${escapeHtml(b.notes)}" target="_blank" style="font-size:11px;color:#1a73e8;text-decoration:none;display:inline-block;margin-top:6px">View Notes Doc →</a>` : ''}
+                            ${b.notes?`<a href="${escapeHtml(b.notes)}" target="_blank" style="font-size:11px;color:#1a73e8;text-decoration:none;display:inline-block;margin-top:6px">View Notes Doc →</a>`:''}
                         </div>`
                     ).join('');
-                    claimUI = `
-                        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--tv-border)">
-                            ${statusBadge}
-                            <div style="margin-top:8px;font-size:13px">Completed by <strong style="color:#1a73e8">${escapeHtml(src.owner || '')}</strong></div>
-                            ${notesBlocks || '<div style="font-size:12px;color:var(--tv-text-muted);margin-top:8px">No notes logged yet.</div>'}
-                        </div>`;
+                    typeSection = `<div class="tdp-section">
+                        ${statusBadge}
+                        <div style="margin-top:8px;font-size:13px">Completed by <strong style="color:#1a73e8">${escapeHtml(src.owner||'')}</strong></div>
+                        ${notesBlocks||'<div style="font-size:12px;color:var(--tv-text-muted);margin-top:8px">No notes logged yet.</div>'}
+                    </div>`;
                 }
             }
 
             panel.innerHTML = `
                 <button class="tdp-close" onclick="closeTrinityDetail()">×</button>
-                <div class="tdp-type" style="color:${typeColors[src.type]||'#888'};margin-bottom:8px">${src.type.replace('_',' ')}</div>
+                <div class="tdp-type" style="color:${typeColors[src.type]||'#888'}">${src.type.replace(/_/g,' ')}</div>
                 <h3 class="tdp-editable" contenteditable="true" onblur="saveNodeField('${src.id}','name',this)" style="font-size:18px;font-weight:600;margin:0 0 6px;outline:none;border-radius:4px;padding:2px 4px;margin-left:-4px">${escapeHtml(src.name)}</h3>
-                <div class="tdp-editable tdp-oneliner" contenteditable="true" onblur="saveNodeField('${src.id}','oneliner',this)" style="margin-bottom:16px;min-height:20px" data-placeholder="Add a description…">${escapeHtml(src.oneliner||'')}</div>
-                ${blocks}
-                ${claimUI}
-                ${connList.length ? `<div class="tdp-connections" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--tv-border)">${connList.join('<br>')}</div>` : ''}
-                <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--tv-border)">
-                    <div class="tdp-block-label" style="margin-bottom:6px">Notes</div>
-                    <textarea class="tdp-textarea" style="min-height:80px;font-size:13px" placeholder="Add a note…" onblur="saveQuickNote('${src.id}',this)">${escapeHtml(src._quickNote||'')}</textarea>
+                <div class="tdp-editable tdp-oneliner" contenteditable="true" onblur="saveNodeField('${src.id}','oneliner',this)" style="margin-bottom:4px;min-height:20px" data-placeholder="Add a description…">${escapeHtml(src.oneliner||'')}</div>
+                ${typeSection}
+                ${linksSection(src)}
+                <div class="tdp-section">
+                    <div class="tdp-section-label">Notes</div>
+                    <textarea class="tdp-textarea" style="min-height:72px;font-size:13px" placeholder="Add a note…" onblur="saveQuickNote('${src.id}',this)">${escapeHtml(src._quickNote||'')}</textarea>
                 </div>
+                ${connItems.length ? `<div class="tdp-section tdp-connections">${connItems.join('<br>')}</div>` : ''}
                 <button class="tdp-delete-btn" onclick="deleteNode('${src.id}')">Delete node</button>
             `;
             panel.classList.add('open');
@@ -4323,6 +4454,100 @@
             if (!card) return;
             card._quickNote = textarea.value;
             saveData();
+        }
+
+        // ── Signal field setters ──
+        function setNodeSignal(nodeId, field, val) {
+            const node = [...cards, ...communities].find(x => x.id === nodeId);
+            if (!node) return;
+            // Toggle off if same value clicked again
+            node[field] = node[field] === val ? null : val;
+            saveData();
+            showTrinityDetail({ id: nodeId });
+        }
+
+        function saveSignalField(nodeId, field, el) {
+            const node = [...cards, ...communities].find(x => x.id === nodeId);
+            if (!node) return;
+            const val = el.value;
+            if (node[field] === val) return;
+            node[field] = val;
+            saveData();
+            gToast('Saved');
+        }
+
+        // ── Links array ──
+        function addNodeLink(nodeId) {
+            const node = [...cards, ...communities].find(x => x.id === nodeId);
+            if (!node) return;
+            const label = (document.getElementById('linkLabelInput').value || '').trim();
+            const url = (document.getElementById('linkUrlInput').value || '').trim();
+            if (!url) { gToast('Enter a URL first'); return; }
+            if (!node.links) node.links = [];
+            node.links.push({ label: label || url, url });
+            saveData();
+            showTrinityDetail({ id: nodeId });
+            gToast('Link added');
+        }
+
+        function removeNodeLink(nodeId, idx) {
+            const node = [...cards, ...communities].find(x => x.id === nodeId);
+            if (!node || !node.links) return;
+            node.links.splice(idx, 1);
+            saveData();
+            showTrinityDetail({ id: nodeId });
+        }
+
+        // ── Link SITUATION → WHAT_IF (draws TESTS edge) ──
+        function linkToHypothesis(situationId) {
+            const hypoId = (document.getElementById('testsHypoSelect') || {}).value;
+            if (!hypoId) { gToast('Select a hypothesis first'); return; }
+            const edgeId = `tests-${situationId}-${hypoId}`;
+            if (connections.find(x => x.id === edgeId)) { gToast('Already linked'); return; }
+            connections.push({ id: edgeId, fromId: situationId, toId: hypoId, edgeLabel: 'TESTS', bidirectional: false });
+            saveData();
+            renderTrinityGraph();
+            showTrinityDetail({ id: situationId });
+            gToast('Linked to hypothesis');
+        }
+
+        // ── Hypothesis scoreboard ──
+        function renderScoreboard() {
+            const el = document.getElementById('scoreboard');
+            if (!el) return;
+            const whatIfs = cards.filter(x => x.type === 'WHAT_IF');
+            if (!whatIfs.length) {
+                el.innerHTML = '<div style="font-size:11px;color:var(--tv-text-muted)">No hypotheses yet.</div>';
+                return;
+            }
+            const scored = whatIfs.map(h => {
+                const sitCount = connections.filter(c => {
+                    const othId = c.fromId === h.id ? c.toId : (c.toId === h.id ? c.fromId : null);
+                    const n = othId && cards.find(x => x.id === othId);
+                    return n && n.type === 'SITUATION';
+                }).length;
+                const wtpScore = { strong: 2, weak: 1, none: 0 }[h.wtpStrength || 'none'] || 0;
+                const resScore = { low: 2, med: 1, high: 0 }[h.resistance || ''] || 0;
+                return { ...h, sitCount, score: sitCount * 3 + wtpScore * 2 + resScore };
+            }).sort((a, b) => b.score - a.score);
+
+            const rColor = { low: '#34a853', med: '#f9ab00', high: '#ea4335' };
+            const sColor = { untested: '#9e9e9e', testing: '#1a73e8', validated: '#34a853', invalidated: '#ea4335' };
+
+            el.innerHTML = scored.map(h => {
+                const st = h.hypoStatus || 'untested';
+                const stLabel = st.charAt(0).toUpperCase() + st.slice(1);
+                const wtpSnippet = h.wtpSignal ? `"${h.wtpSignal.slice(0, 55)}${h.wtpSignal.length > 55 ? '…' : ''}"` : '';
+                return `<div class="sb-item" onclick="if(_trinityNetwork){_trinityNetwork.focus('${h.id}',{scale:1.2,animation:true});}showTrinityDetail({id:'${h.id}'})">
+                    <div class="sb-item-name" title="${escapeHtml(h.name)}">${escapeHtml(h.name)}</div>
+                    <div class="sb-item-meta">
+                        <span class="sb-badge" style="background:${sColor[st]||'#9e9e9e'}">${stLabel}</span>
+                        ${h.resistance ? `<span class="sb-badge" style="background:${rColor[h.resistance]||'#9e9e9e'}">${h.resistance.charAt(0).toUpperCase()+h.resistance.slice(1)} res</span>` : ''}
+                        ${h.sitCount ? `<span class="sb-count">🎙 ${h.sitCount}</span>` : ''}
+                    </div>
+                    ${wtpSnippet ? `<div class="sb-wtp">${escapeHtml(wtpSnippet)}</div>` : ''}
+                </div>`;
+            }).join('');
         }
 
         function closeTrinityDetail() {
