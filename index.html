@@ -1567,6 +1567,7 @@
     <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-auth-compat.js"></script>
     <script>
         // Firebase
         firebase.initializeApp({
@@ -1578,6 +1579,7 @@
             appId: "1:595239038626:web:a501cd842df7fbd8d631fb"
         });
         const db = firebase.firestore();
+        const auth = firebase.auth();
 
         // Data store
         const TEAM_MEMBERS = ['Adele','Carter','Peter','Dale','Austin','Libby','Connor','Tobasum','Mark','Michael'];
@@ -4483,15 +4485,10 @@
         }
 
         // ═══════════════════════════════════════
-        // PRESENCE — real-time "who's on canvas"
+        // PRESENCE — backed by Firebase Anonymous Auth
         // ═══════════════════════════════════════
         const PRESENCE_COLORS = ['#1a73e8','#34a853','#ea4335','#f9ab00','#7c5cbf','#00897b','#e91e63','#ff5722','#0288d1','#558b2f'];
-        const _sessionId = (() => {
-            let id = localStorage.getItem('b1SessionId');
-            if (!id) { id = Math.random().toString(36).slice(2,10) + Date.now().toString(36); localStorage.setItem('b1SessionId', id); }
-            return id;
-        })();
-        let _myName = localStorage.getItem('b1MyName') || null;
+        let _currentUser = null;       // Firebase auth user
         let _currentOpenNode = null;
         let _presenceStarted = false;
         let _namePickerOpen = false;
@@ -4502,17 +4499,17 @@
         }
 
         function updatePresence(nodeOpen) {
-            if (!_myName || typeof db === 'undefined') return;
-            const color = presenceColor(_myName);
+            if (!_currentUser || !_currentUser.displayName) return;
+            const name = _currentUser.displayName;
             db.collection('backyardone_discovery').doc('presence')
-              .set({ [_sessionId]: { name: _myName, color, ts: Date.now(), nodeOpen: nodeOpen || null } }, { merge: true })
+              .set({ [_currentUser.uid]: { name, color: presenceColor(name), ts: Date.now(), nodeOpen: nodeOpen || null } }, { merge: true })
               .catch(() => {});
         }
 
         function removePresence() {
-            if (!_myName || typeof db === 'undefined') return;
+            if (!_currentUser) return;
             const update = {};
-            update[_sessionId] = firebase.firestore.FieldValue.delete();
+            update[_currentUser.uid] = firebase.firestore.FieldValue.delete();
             db.collection('backyardone_discovery').doc('presence').update(update).catch(() => {});
         }
 
@@ -4521,7 +4518,7 @@
                 const now = Date.now();
                 const data = snap.exists ? snap.data() || {} : {};
                 const others = Object.entries(data)
-                    .filter(([sid, v]) => v && v.ts && (now - v.ts) < 90000 && sid !== _sessionId)
+                    .filter(([uid, v]) => v && v.ts && (now - v.ts) < 90000 && uid !== _currentUser?.uid)
                     .map(([, v]) => v);
                 renderPresence(others);
             });
@@ -4530,16 +4527,15 @@
         function renderPresence(others) {
             const bar = document.getElementById('presenceBar');
             if (!bar) return;
-            // Others first (row-reverse makes rightmost = first in DOM)
             const othersHtml = others.map(u => {
                 const tip = u.nodeOpen ? `${escapeHtml(u.name)} — ${escapeHtml(u.nodeOpen)}` : escapeHtml(u.name);
                 return `<div class="presence-avatar" style="background:${u.color}">${u.name.charAt(0).toUpperCase()}<span class="pa-tooltip">${tip}</span></div>`;
             }).join('');
-            // Self avatar — always present, clickable to switch name
-            const meColor = _myName ? presenceColor(_myName) : '#bdc1c6';
-            const meInitial = _myName ? _myName.charAt(0).toUpperCase() : '?';
-            const meTip = _myName ? `You (${escapeHtml(_myName)}) — click to switch` : 'Click to set your name';
-            const meHtml = `<div class="presence-avatar is-me" style="background:${meColor};color:${meColor};border-color:#fff" onclick="toggleNamePicker()" title="">
+            const myName = _currentUser?.displayName;
+            const meColor = myName ? presenceColor(myName) : '#bdc1c6';
+            const meInitial = myName ? myName.charAt(0).toUpperCase() : '?';
+            const meTip = myName ? `You (${escapeHtml(myName)}) — click to switch` : 'Click to set your name';
+            const meHtml = `<div class="presence-avatar is-me" style="background:${meColor}" onclick="toggleNamePicker()">
                 <span style="color:#fff">${meInitial}</span>
                 <span class="pa-tooltip">${meTip}</span>
             </div>`;
@@ -4549,8 +4545,9 @@
         function buildNamePicker() {
             const grid = document.querySelector('#namePicker .np-grid');
             if (!grid) return;
+            const myName = _currentUser?.displayName;
             grid.innerHTML = TEAM_MEMBERS.map(n =>
-                `<button class="np-btn${n === _myName ? ' active' : ''}" onclick="chooseName('${n}')">${n}</button>`
+                `<button class="np-btn${n === myName ? ' active' : ''}" onclick="chooseName('${n}')">${n}</button>`
             ).join('');
         }
 
@@ -4560,7 +4557,6 @@
             buildNamePicker();
             picker.style.display = _namePickerOpen ? 'flex' : 'none';
             if (_namePickerOpen) {
-                // Close on outside click
                 setTimeout(() => document.addEventListener('click', closePickerOnOutside, { once: true }), 0);
             }
         }
@@ -4574,19 +4570,30 @@
         }
 
         function chooseName(name) {
-            _myName = name;
-            localStorage.setItem('b1MyName', name);
+            if (!_currentUser) return;
             document.getElementById('namePicker').style.display = 'none';
             _namePickerOpen = false;
-            updatePresence(_currentOpenNode);
-            renderPresence([]); // re-render self immediately; snapshot will fill others
-            if (!_presenceStarted) startPresence();
+            _currentUser.updateProfile({ displayName: name }).then(() => {
+                renderPresence([]);
+                if (!_presenceStarted) startPresence();
+                else { updatePresence(_currentOpenNode); subscribePresence(); }
+            }).catch(e => console.warn('updateProfile failed', e));
         }
 
         function initPresence() {
-            renderPresence([]); // always render self avatar immediately
-            if (_myName) startPresence();
-            else toggleNamePicker(); // open picker on first visit
+            // Sign in anonymously — Firebase gives each device a stable UID
+            auth.signInAnonymously().catch(e => console.warn('Auth failed', e));
+            auth.onAuthStateChanged(user => {
+                if (!user) return;
+                _currentUser = user;
+                renderPresence([]); // show self avatar immediately
+                if (!user.displayName) {
+                    // First time on this device — show name picker
+                    toggleNamePicker();
+                } else {
+                    startPresence();
+                }
+            });
         }
 
         function startPresence() {
@@ -4598,7 +4605,7 @@
             window.addEventListener('beforeunload', removePresence);
             window.addEventListener('visibilitychange', () => {
                 if (document.visibilityState === 'hidden') removePresence();
-                else { updatePresence(_currentOpenNode); }
+                else updatePresence(_currentOpenNode);
             });
         }
 
