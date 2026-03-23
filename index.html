@@ -1359,6 +1359,44 @@
         /* ── Vertical section divider in detail panel ── */
         .tdp-section { margin-top:14px; padding-top:14px; border-top:1px solid var(--tv-border); }
         .tdp-section-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--tv-text-muted); margin-bottom:6px; }
+        .mom-hint { font-weight:400; color:var(--tv-text-muted); font-style:italic; text-transform:none; letter-spacing:0; }
+        .mom-field { min-height:56px; font-size:12px; }
+
+        /* ── Sidebar tabs ── */
+        .tl-tabs { display:flex; gap:4px; margin-bottom:14px; background:#f1f3f4; border-radius:8px; padding:3px; }
+        .tl-tab { flex:1; padding:6px 0; border:none; background:transparent; border-radius:6px; font-size:12px; font-weight:600; color:#5f6368; cursor:pointer; transition:all .15s; }
+        .tl-tab.active { background:#fff; color:#1a73e8; box-shadow:0 1px 3px rgba(0,0,0,.12); }
+        .tl-tab:hover:not(.active) { color:#3c4043; }
+
+        /* ── Dashboard view ── */
+        #dashboardView { display:none; flex:1; overflow-y:auto; background:#f8f9fa; padding:24px; }
+        .db-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-bottom:24px; }
+        .db-card { background:#fff; border-radius:12px; padding:18px 20px; box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06); }
+        .db-card-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:#5f6368; margin-bottom:8px; }
+        .db-card-value { font-size:32px; font-weight:700; color:#1a73e8; line-height:1; }
+        .db-card-sub { font-size:12px; color:#80868b; margin-top:4px; }
+        .db-section-title { font-size:13px; font-weight:600; color:#3c4043; margin:0 0 12px; }
+        .db-section { background:#fff; border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06); margin-bottom:16px; }
+        .db-progress-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+        .db-progress-row:last-child { margin-bottom:0; }
+        .db-progress-label { font-size:12px; color:#3c4043; min-width:120px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .db-progress-bar { flex:1; height:6px; background:#f1f3f4; border-radius:3px; overflow:hidden; }
+        .db-progress-fill { height:100%; border-radius:3px; background:#34a853; transition:width .4s; }
+        .db-progress-count { font-size:11px; color:#80868b; min-width:36px; text-align:right; }
+        .db-hypo-card { border:1px solid #e8eaed; border-radius:8px; padding:12px 14px; margin-bottom:8px; cursor:pointer; transition:box-shadow .15s; }
+        .db-hypo-card:hover { box-shadow:0 2px 8px rgba(0,0,0,.1); }
+        .db-hypo-name { font-size:13px; font-weight:600; color:#202124; margin-bottom:6px; }
+        .db-hypo-meta { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+        .db-badge { padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700; color:#fff; }
+        .db-hypo-quote { font-size:11px; color:#5f6368; font-style:italic; margin-top:6px; }
+        .db-team-row { display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid #f1f3f4; }
+        .db-team-row:last-child { border-bottom:none; }
+        .db-team-avatar { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; flex-shrink:0; }
+        .db-team-name { font-size:13px; color:#3c4043; flex:1; font-weight:500; }
+        .db-team-stat { font-size:11px; color:#80868b; }
+        .db-signal-row { display:flex; align-items:center; justify-content:space-between; padding:7px 0; border-bottom:1px solid #f1f3f4; font-size:12px; color:#3c4043; }
+        .db-signal-row:last-child { border-bottom:none; }
+        .db-signal-val { font-weight:700; color:#1a73e8; }
     </style>
 </head>
 <body>
@@ -1457,6 +1495,11 @@
         <div class="trinity-view" id="trinityView">
             <div class="trinity-legend">
                 <div class="tl-logo">BackyardOne</div>
+                <div class="tl-tabs">
+                    <button id="tabCanvas" class="tl-tab active" onclick="switchTab('canvas')">Canvas</button>
+                    <button id="tabDashboard" class="tl-tab" onclick="switchTab('dashboard')">Dashboard</button>
+                </div>
+                <div id="legendContent">
                 <div class="tl-title">DISCOVERY MAP</div>
                 <div class="tl-item"><span class="tl-dot" style="background:var(--tv-node-who)"></span>WHO (Actors)</div>
                 <div class="tl-item"><span class="tl-dot" style="background:var(--tv-node-what)"></span>WHAT (Assets/Facts)</div>
@@ -1484,8 +1527,9 @@
                     <div class="sb-title">Hypothesis Scoreboard</div>
                     <div id="scoreboard"></div>
                 </div>
+                </div><!-- end legendContent -->
             </div>
-            <div class="trinity-graph-area">
+            <div class="trinity-graph-area" id="trinityGraphArea">
                 <div id="trinityGraphContainer"></div>
                 <div id="presenceBar"></div>
                 <div id="namePicker">
@@ -1494,6 +1538,7 @@
                 </div>
                 <div class="trinity-detail-panel" id="trinityDetailPanel"></div>
             </div>
+            <div id="dashboardView"></div>
         </div>
 
 
@@ -2063,6 +2108,7 @@
             localStorage.setItem('b1Communities', JSON.stringify(communities));
             localStorage.setItem('b1Connections', JSON.stringify(connections));
             renderScoreboard();
+            renderDashboard();
             showSyncStatus('saving');
             try {
                 db.collection('backyardone_discovery').doc('shared').set({ cards, dailyTasks, communities, connections }, { merge: true })
@@ -3550,47 +3596,48 @@
                         <span style="font-size:11px;color:var(--tv-text-muted)">(SITUATION nodes connected)</span>
                     </div>`;
             } else if (src.type === 'SITUATION') {
-                // Build "tests hypothesis" dropdown
                 const whatIfs = cards.filter(x => x.type === 'WHAT_IF');
-                const hypoOpts = whatIfs.map(h =>
-                    `<option value="${h.id}" ${connections.find(c=>(c.fromId===src.id&&c.toId===h.id)||(c.toId===src.id&&c.fromId===h.id))? 'disabled':''}>
-                        ${escapeHtml(h.name)}${connections.find(c=>(c.fromId===src.id&&c.toId===h.id)||(c.toId===src.id&&c.fromId===h.id))?' ✓':''}
-                    </option>`
-                ).join('');
+                const hypoOpts = whatIfs.map(h => {
+                    const linked = connections.find(c=>(c.fromId===src.id&&c.toId===h.id)||(c.toId===src.id&&c.fromId===h.id));
+                    return `<option value="${h.id}" ${linked?'disabled':''}>${escapeHtml(h.name)}${linked?' ✓':''}</option>`;
+                }).join('');
                 typeSection = `
-                    <div class="tdp-section">
-                        <div class="tdp-section-label">Verbatim quote <span style="font-weight:400;color:var(--tv-text-muted);font-style:italic">— the single most important thing they said</span></div>
-                        <textarea class="tdp-textarea" style="min-height:64px;font-size:12px" placeholder="Their exact words…" onblur="saveSignalField('${src.id}','verbatim',this)">${escapeHtml(src.verbatim||'')}</textarea>
+                    <div style="margin-top:12px;padding:10px 12px;background:#e8f0fe;border-radius:8px;font-size:11px;color:#1a73e8;font-weight:500">
+                        Mom Test — capture their world, not your pitch
                     </div>
                     <div class="tdp-section">
-                        <div class="tdp-section-label">WTP signal</div>
-                        <div class="sig-chips">${chips(src.id, 'wtpStrength', src.wtpStrength, [
-                            ['strong','💰 Strong','c-strong'],['weak','〰 Weak','c-weak'],['none','✗ None','c-none']
-                        ])}</div>
+                        <div class="tdp-section-label">1 · Context <span class="mom-hint">— their role, situation, background</span></div>
+                        <textarea class="tdp-textarea mom-field" placeholder="e.g. GC running 15 ADU projects/yr in Silver Lake…" onblur="saveSignalField('${src.id}','momContext',this)">${escapeHtml(src.momContext||'')}</textarea>
                     </div>
                     <div class="tdp-section">
-                        <div class="tdp-section-label">Referral? <span style="font-weight:400;color:var(--tv-text-muted);font-style:italic">— gave you another name to talk to</span></div>
-                        <div class="sig-chips">${chips(src.id, 'referral', src.referral, [
-                            ['yes','👥 Yes — strongest PMF signal','c-yes'],['no','No','c-no']
-                        ])}</div>
+                        <div class="tdp-section-label">2 · Struggle <span class="mom-hint">— their words, not yours</span></div>
+                        <textarea class="tdp-textarea mom-field" placeholder="e.g. "I waste 2 days on every lot that turns out infeasible"" onblur="saveSignalField('${src.id}','momStruggle',this)">${escapeHtml(src.momStruggle||'')}</textarea>
+                    </div>
+                    <div class="tdp-section">
+                        <div class="tdp-section-label">3 · Current solution <span class="mom-hint">— what do they do today?</span></div>
+                        <textarea class="tdp-textarea mom-field" placeholder="e.g. Drive to site, check zoning portal manually…" onblur="saveSignalField('${src.id}','momCurrentSolution',this)">${escapeHtml(src.momCurrentSolution||'')}</textarea>
+                    </div>
+                    <div class="tdp-section">
+                        <div class="tdp-section-label">4 · WTP moment <span class="mom-hint">— money / time / switching cost, unprompted</span></div>
+                        <textarea class="tdp-textarea mom-field" placeholder="e.g. "I'd pay whatever to skip those wasted site visits"" onblur="saveSignalField('${src.id}','momWTPMoment',this)">${escapeHtml(src.momWTPMoment||'')}</textarea>
+                        <div class="sig-chips" style="margin-top:8px">${chips(src.id,'wtpStrength',src.wtpStrength,[['strong','💰 Strong','c-strong'],['weak','〰 Weak','c-weak'],['none','✗ None','c-none']])}</div>
+                    </div>
+                    <div class="tdp-section">
+                        <div class="tdp-section-label">5 · Referral <span class="mom-hint">— strongest PMF signal</span></div>
+                        <div class="sig-chips">${chips(src.id,'referral',src.referral,[['yes','👥 Yes','c-yes'],['no','No','c-no']])}</div>
+                        ${src.referral==='yes'?`<input class="tdp-input" style="margin-top:8px" placeholder="Who? Name + contact…" value="${escapeHtml(src.referralName||'')}" onblur="saveSignalField('${src.id}','referralName',this)">`:``}
                     </div>
                     <div class="tdp-section">
                         <div class="tdp-section-label">Resistance type</div>
-                        <div class="sig-chips">${chips(src.id, 'resistanceType', src.resistanceType, [
-                            ['price','💰 Price','c-price'],['awareness','📣 Awareness','c-awareness'],
-                            ['trust','🤝 Trust','c-trust'],['inertia','😴 Inertia','c-inertia']
-                        ])}</div>
+                        <div class="sig-chips">${chips(src.id,'resistanceType',src.resistanceType,[['price','💰 Price','c-price'],['awareness','📣 Awareness','c-awareness'],['trust','🤝 Trust','c-trust'],['inertia','😴 Inertia','c-inertia']])}</div>
                     </div>
-                    ${whatIfs.length ? `<div class="tdp-section">
+                    ${whatIfs.length?`<div class="tdp-section">
                         <div class="tdp-section-label">Tests hypothesis</div>
                         <div style="display:flex;gap:6px;margin-top:6px">
-                            <select id="testsHypoSelect" class="tdp-input" style="flex:1">
-                                <option value="">Select hypothesis…</option>
-                                ${hypoOpts}
-                            </select>
+                            <select id="testsHypoSelect" class="tdp-input" style="flex:1"><option value="">Select…</option>${hypoOpts}</select>
                             <button onclick="linkToHypothesis('${src.id}')" style="padding:8px 12px;background:#7c5cbf;color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer;white-space:nowrap">Link →</button>
                         </div>
-                    </div>` : ''}`;
+                    </div>`:''}`;
             } else if (src.interviewStatus !== undefined) {
                 // WHO interview target — claim workflow
                 const status = src.interviewStatus || 'unclaimed';
@@ -4482,6 +4529,156 @@
                 saveData();
                 renderCards();
             }).catch(() => {});
+        }
+
+        // ═══════════════════════════════════════
+        // TABS — Canvas / Dashboard
+        // ═══════════════════════════════════════
+        function switchTab(tab) {
+            const isCanvas = tab === 'canvas';
+            document.getElementById('trinityGraphArea').style.display = isCanvas ? '' : 'none';
+            document.getElementById('dashboardView').style.display = isCanvas ? 'none' : '';
+            document.getElementById('legendContent').style.display = isCanvas ? '' : 'none';
+            document.getElementById('tabCanvas').classList.toggle('active', isCanvas);
+            document.getElementById('tabDashboard').classList.toggle('active', !isCanvas);
+            if (!isCanvas) renderDashboard();
+        }
+
+        // ═══════════════════════════════════════
+        // DASHBOARD
+        // ═══════════════════════════════════════
+        function renderDashboard() {
+            const dash = document.getElementById('dashboardView');
+            if (!dash || dash.style.display === 'none') return;
+
+            const targets = cards.filter(c => c.interviewStatus !== undefined);
+            const situations = cards.filter(c => c.type === 'SITUATION');
+            const hypotheses = cards.filter(c => c.type === 'WHAT_IF');
+            const unclaimed = targets.filter(c => c.interviewStatus === 'unclaimed').length;
+            const claimed   = targets.filter(c => c.interviewStatus === 'claimed').length;
+            const completed = targets.filter(c => c.interviewStatus === 'completed').length;
+            const total = targets.length;
+            const pct = total ? Math.round(completed / total * 100) : 0;
+
+            // Signals across all SITUATION nodes
+            const strongWTP  = situations.filter(s => s.wtpStrength === 'strong').length;
+            const weakWTP    = situations.filter(s => s.wtpStrength === 'weak').length;
+            const referrals  = situations.filter(s => s.referral === 'yes').length;
+            const resCounts  = {price:0,awareness:0,trust:0,inertia:0};
+            situations.forEach(s => { if (s.resistanceType && resCounts[s.resistanceType]!==undefined) resCounts[s.resistanceType]++; });
+
+            // Segment breakdown (communities except team)
+            const segments = communities.filter(c => c.id !== 'b1-comm-team').map(seg => {
+                const memberIds = connections
+                    .filter(c => c.toId === seg.id || c.fromId === seg.id)
+                    .map(c => c.toId === seg.id ? c.fromId : c.toId);
+                const members = memberIds.map(id => cards.find(x => x.id === id)).filter(x => x && x.interviewStatus !== undefined);
+                const done = members.filter(m => m.interviewStatus === 'completed').length;
+                return { name: seg.name, done, total: members.length };
+            }).filter(s => s.total > 0);
+
+            // Team progress
+            const teamMap = {};
+            targets.forEach(t => {
+                if (!t.owner) return;
+                if (!teamMap[t.owner]) teamMap[t.owner] = { claimed:0, completed:0 };
+                if (t.interviewStatus === 'claimed') teamMap[t.owner].claimed++;
+                if (t.interviewStatus === 'completed') teamMap[t.owner].completed++;
+            });
+            const teamRows = Object.entries(teamMap).sort((a,b) => (b[1].completed+b[1].claimed) - (a[1].completed+a[1].claimed));
+
+            // Hypotheses scored
+            const scoredHypos = hypotheses.map(h => {
+                const sitCount = connections.filter(c => {
+                    const oid = c.fromId===h.id ? c.toId : (c.toId===h.id ? c.fromId : null);
+                    const n = oid && cards.find(x => x.id===oid);
+                    return n && n.type==='SITUATION';
+                }).length;
+                return {...h, sitCount};
+            }).sort((a,b) => b.sitCount - a.sitCount);
+
+            const rColor = {low:'#34a853',med:'#f9ab00',high:'#ea4335'};
+            const sColor = {untested:'#9e9e9e',testing:'#1a73e8',validated:'#34a853',invalidated:'#ea4335'};
+
+            dash.innerHTML = `
+                <div style="max-width:860px;margin:0 auto">
+                    <div style="font-size:20px;font-weight:700;color:#202124;margin-bottom:20px">Discovery Progress</div>
+
+                    <!-- Stat cards -->
+                    <div class="db-grid">
+                        <div class="db-card">
+                            <div class="db-card-label">Interviews done</div>
+                            <div class="db-card-value">${completed}</div>
+                            <div class="db-card-sub">of ${total} targets · ${pct}%</div>
+                        </div>
+                        <div class="db-card">
+                            <div class="db-card-label">In progress</div>
+                            <div class="db-card-value" style="color:#f9ab00">${claimed}</div>
+                            <div class="db-card-sub">claimed, not yet complete</div>
+                        </div>
+                        <div class="db-card">
+                            <div class="db-card-label">Strong WTP signals</div>
+                            <div class="db-card-value" style="color:#34a853">${strongWTP}</div>
+                            <div class="db-card-sub">${weakWTP} weak · ${situations.length - strongWTP - weakWTP} none</div>
+                        </div>
+                        <div class="db-card">
+                            <div class="db-card-label">Referrals received</div>
+                            <div class="db-card-value" style="color:#7c5cbf">${referrals}</div>
+                            <div class="db-card-sub">strongest PMF signal</div>
+                        </div>
+                    </div>
+
+                    <!-- Segment funnel -->
+                    ${segments.length ? `<div class="db-section" style="margin-bottom:16px">
+                        <div class="db-section-title">By Segment</div>
+                        ${segments.map(s => `
+                            <div class="db-progress-row">
+                                <div class="db-progress-label">${escapeHtml(s.name)}</div>
+                                <div class="db-progress-bar"><div class="db-progress-fill" style="width:${s.total?Math.round(s.done/s.total*100):0}%"></div></div>
+                                <div class="db-progress-count">${s.done}/${s.total}</div>
+                            </div>`).join('')}
+                    </div>` : ''}
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+                        <!-- Resistance signals -->
+                        <div class="db-section">
+                            <div class="db-section-title">Resistance Pattern</div>
+                            ${Object.entries(resCounts).map(([k,v]) => `
+                                <div class="db-signal-row">
+                                    <span>${k.charAt(0).toUpperCase()+k.slice(1)}</span>
+                                    <span class="db-signal-val">${v}</span>
+                                </div>`).join('')}
+                        </div>
+                        <!-- Team activity -->
+                        <div class="db-section">
+                            <div class="db-section-title">Team Activity</div>
+                            ${teamRows.length ? teamRows.map(([name, stats]) => `
+                                <div class="db-team-row">
+                                    <div class="db-team-avatar" style="background:${presenceColor(name)}">${name.charAt(0)}</div>
+                                    <div class="db-team-name">${escapeHtml(name)}</div>
+                                    <div class="db-team-stat">${stats.completed} done · ${stats.claimed} active</div>
+                                </div>`).join('') : '<div style="font-size:12px;color:#9aa0a6">No interviews claimed yet</div>'}
+                        </div>
+                    </div>
+
+                    <!-- Hypothesis board -->
+                    <div class="db-section">
+                        <div class="db-section-title">Hypotheses · ranked by evidence</div>
+                        ${scoredHypos.length ? scoredHypos.map(h => {
+                            const st = h.hypoStatus || 'untested';
+                            const wtpSnippet = h.wtpSignal ? `"${h.wtpSignal.slice(0,80)}${h.wtpSignal.length>80?'…':''}"` : '';
+                            return `<div class="db-hypo-card" onclick="switchTab('canvas');setTimeout(()=>{if(_trinityNetwork)_trinityNetwork.focus('${h.id}',{scale:1.2,animation:true});showTrinityDetail({id:'${h.id}'});},200)">
+                                <div class="db-hypo-name">${escapeHtml(h.name)}</div>
+                                <div class="db-hypo-meta">
+                                    <span class="db-badge" style="background:${sColor[st]||'#9e9e9e'}">${st.charAt(0).toUpperCase()+st.slice(1)}</span>
+                                    ${h.resistance?`<span class="db-badge" style="background:${rColor[h.resistance]||'#9e9e9e'}">${h.resistance.charAt(0).toUpperCase()+h.resistance.slice(1)} resistance</span>`:''}
+                                    ${h.sitCount?`<span style="font-size:11px;color:#5f6368">🎙 ${h.sitCount} interview${h.sitCount!==1?'s':''}</span>`:'<span style="font-size:11px;color:#9aa0a6">No interviews yet</span>'}
+                                </div>
+                                ${wtpSnippet?`<div class="db-hypo-quote">${escapeHtml(wtpSnippet)}</div>`:''}
+                            </div>`;
+                        }).join('') : '<div style="font-size:12px;color:#9aa0a6">No hypotheses yet — add WHAT IF nodes on the canvas</div>'}
+                    </div>
+                </div>`;
         }
 
         // ═══════════════════════════════════════
