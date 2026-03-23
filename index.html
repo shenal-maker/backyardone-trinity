@@ -1908,6 +1908,7 @@
                         }
                         renderCards();
                         if (currentView === 'trinity') renderTrinityGraph();
+                        renderDashboard();
                         showSyncStatus('synced');
                     }
                     // Always merge seed nodes (seedTrinityData is idempotent — skips existing IDs)
@@ -4570,15 +4571,6 @@
             const resCounts  = {price:0,awareness:0,trust:0,inertia:0};
             situations.forEach(s => { if (s.resistanceType && resCounts[s.resistanceType]!==undefined) resCounts[s.resistanceType]++; });
 
-            // Segment breakdown (communities except team)
-            const segments = communities.filter(c => c.id !== 'b1-comm-team').map(seg => {
-                const memberIds = connections
-                    .filter(c => c.toId === seg.id || c.fromId === seg.id)
-                    .map(c => c.toId === seg.id ? c.fromId : c.toId);
-                const members = memberIds.map(id => cards.find(x => x.id === id)).filter(x => x && x.interviewStatus !== undefined);
-                const done = members.filter(m => m.interviewStatus === 'completed').length;
-                return { name: seg.name, done, total: members.length };
-            }).filter(s => s.total > 0);
 
             // Team progress
             const teamMap = {};
@@ -4603,16 +4595,35 @@
             const rColor = {low:'#34a853',med:'#f9ab00',high:'#ea4335'};
             const sColor = {untested:'#9e9e9e',testing:'#1a73e8',validated:'#34a853',invalidated:'#ea4335'};
 
+            const goalTotal = 20;
+            const goalPct = Math.round(completed / goalTotal * 100);
+            const allSegments = communities.filter(c => c.id !== 'b1-comm-team').map(seg => {
+                const memberIds = connections
+                    .filter(c => c.toId === seg.id || c.fromId === seg.id)
+                    .map(c => c.toId === seg.id ? c.fromId : c.toId);
+                const members = memberIds.map(id => cards.find(x => x.id === id)).filter(x => x && x.interviewStatus !== undefined);
+                const done = members.filter(m => m.interviewStatus === 'completed').length;
+                const inProg = members.filter(m => m.interviewStatus === 'claimed').length;
+                return { name: seg.name, done, inProg, total: members.length };
+            });
+
             dash.innerHTML = `
-                <div style="max-width:860px;margin:0 auto">
-                    <div style="font-size:20px;font-weight:700;color:#202124;margin-bottom:20px">Discovery Progress</div>
+                <div style="max-width:860px;margin:0 auto;padding-bottom:40px">
+                    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px">
+                        <div style="font-size:20px;font-weight:700;color:#202124">Discovery Progress</div>
+                        <div style="font-size:12px;color:#5f6368">Goal: ${goalTotal} interviews</div>
+                    </div>
+                    <!-- Sprint progress bar -->
+                    <div style="height:6px;background:#e8eaed;border-radius:3px;margin-bottom:24px;overflow:hidden">
+                        <div style="height:100%;width:${Math.min(goalPct,100)}%;background:${goalPct>=100?'#34a853':goalPct>=50?'#1a73e8':'#f9ab00'};border-radius:3px;transition:width .4s"></div>
+                    </div>
 
                     <!-- Stat cards -->
                     <div class="db-grid">
                         <div class="db-card">
                             <div class="db-card-label">Interviews done</div>
                             <div class="db-card-value">${completed}</div>
-                            <div class="db-card-sub">of ${total} targets · ${pct}%</div>
+                            <div class="db-card-sub">${total} targets · ${pct}% complete</div>
                         </div>
                         <div class="db-card">
                             <div class="db-card-label">In progress</div>
@@ -4622,7 +4633,7 @@
                         <div class="db-card">
                             <div class="db-card-label">Strong WTP signals</div>
                             <div class="db-card-value" style="color:#34a853">${strongWTP}</div>
-                            <div class="db-card-sub">${weakWTP} weak · ${situations.length - strongWTP - weakWTP} none</div>
+                            <div class="db-card-sub">${weakWTP} weak · ${Math.max(0,situations.length-strongWTP-weakWTP)} none logged</div>
                         </div>
                         <div class="db-card">
                             <div class="db-card-label">Referrals received</div>
@@ -4631,25 +4642,32 @@
                         </div>
                     </div>
 
-                    <!-- Segment funnel -->
-                    ${segments.length ? `<div class="db-section" style="margin-bottom:16px">
+                    <!-- Segment funnel — always shown -->
+                    <div class="db-section" style="margin-bottom:16px">
                         <div class="db-section-title">By Segment</div>
-                        ${segments.map(s => `
+                        ${allSegments.length ? allSegments.map(s => `
                             <div class="db-progress-row">
                                 <div class="db-progress-label">${escapeHtml(s.name)}</div>
-                                <div class="db-progress-bar"><div class="db-progress-fill" style="width:${s.total?Math.round(s.done/s.total*100):0}%"></div></div>
-                                <div class="db-progress-count">${s.done}/${s.total}</div>
-                            </div>`).join('')}
-                    </div>` : ''}
+                                <div class="db-progress-bar" style="position:relative">
+                                    <div class="db-progress-fill" style="width:${s.total?Math.round((s.done+s.inProg)/s.total*100):0}%;opacity:.35;background:#1a73e8"></div>
+                                    <div class="db-progress-fill" style="position:absolute;top:0;left:0;width:${s.total?Math.round(s.done/s.total*100):0}%;background:#34a853"></div>
+                                </div>
+                                <div class="db-progress-count">${s.done}/${s.total}${s.inProg?` <span style="color:#f9ab00;font-size:10px">(+${s.inProg} active)</span>`:''}</div>
+                            </div>`).join('') : '<div style="font-size:12px;color:#9aa0a6">Add WHO nodes to the canvas and connect them to segment nodes to track progress here.</div>'}
+                    </div>
 
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
                         <!-- Resistance signals -->
                         <div class="db-section">
                             <div class="db-section-title">Resistance Pattern</div>
-                            ${Object.entries(resCounts).map(([k,v]) => `
+                            ${situations.length === 0 ? '<div style="font-size:12px;color:#9aa0a6">Log interviews to see resistance patterns emerge.</div>' :
+                            Object.entries(resCounts).map(([k,v]) => `
                                 <div class="db-signal-row">
                                     <span>${k.charAt(0).toUpperCase()+k.slice(1)}</span>
-                                    <span class="db-signal-val">${v}</span>
+                                    <div style="display:flex;align-items:center;gap:6px">
+                                        <div style="height:6px;width:${v?Math.round(v/situations.length*80):0}px;background:#ea4335;border-radius:3px;min-width:2px"></div>
+                                        <span class="db-signal-val">${v}</span>
+                                    </div>
                                 </div>`).join('')}
                         </div>
                         <!-- Team activity -->
@@ -4660,26 +4678,33 @@
                                     <div class="db-team-avatar" style="background:${presenceColor(name)}">${name.charAt(0)}</div>
                                     <div class="db-team-name">${escapeHtml(name)}</div>
                                     <div class="db-team-stat">${stats.completed} done · ${stats.claimed} active</div>
-                                </div>`).join('') : '<div style="font-size:12px;color:#9aa0a6">No interviews claimed yet</div>'}
+                                </div>`).join('') : '<div style="font-size:12px;color:#9aa0a6">Claim a grey node on the canvas to start your first interview.</div>'}
                         </div>
                     </div>
 
-                    <!-- Hypothesis board -->
+                    <!-- Hypothesis board — always shown -->
                     <div class="db-section">
-                        <div class="db-section-title">Hypotheses · ranked by evidence</div>
+                        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px">
+                            <div class="db-section-title" style="margin:0">Hypotheses · ranked by evidence</div>
+                            <div style="font-size:11px;color:#9aa0a6">click to open on canvas</div>
+                        </div>
                         ${scoredHypos.length ? scoredHypos.map(h => {
                             const st = h.hypoStatus || 'untested';
-                            const wtpSnippet = h.wtpSignal ? `"${h.wtpSignal.slice(0,80)}${h.wtpSignal.length>80?'…':''}"` : '';
+                            const wtpSnippet = h.wtpSignal ? `"${h.wtpSignal.slice(0,100)}${h.wtpSignal.length>100?'…':''}"` : '';
                             return `<div class="db-hypo-card" onclick="switchTab('canvas');setTimeout(()=>{if(_trinityNetwork)_trinityNetwork.focus('${h.id}',{scale:1.2,animation:true});showTrinityDetail({id:'${h.id}'});},200)">
                                 <div class="db-hypo-name">${escapeHtml(h.name)}</div>
                                 <div class="db-hypo-meta">
                                     <span class="db-badge" style="background:${sColor[st]||'#9e9e9e'}">${st.charAt(0).toUpperCase()+st.slice(1)}</span>
                                     ${h.resistance?`<span class="db-badge" style="background:${rColor[h.resistance]||'#9e9e9e'}">${h.resistance.charAt(0).toUpperCase()+h.resistance.slice(1)} resistance</span>`:''}
-                                    ${h.sitCount?`<span style="font-size:11px;color:#5f6368">🎙 ${h.sitCount} interview${h.sitCount!==1?'s':''}</span>`:'<span style="font-size:11px;color:#9aa0a6">No interviews yet</span>'}
+                                    <span style="font-size:11px;color:${h.sitCount?'#5f6368':'#bdc1c6'}">${h.sitCount ? `${h.sitCount} interview${h.sitCount!==1?'s':''}` : 'No interviews yet'}</span>
                                 </div>
                                 ${wtpSnippet?`<div class="db-hypo-quote">${escapeHtml(wtpSnippet)}</div>`:''}
                             </div>`;
-                        }).join('') : '<div style="font-size:12px;color:#9aa0a6">No hypotheses yet — add WHAT IF nodes on the canvas</div>'}
+                        }).join('') : `
+                            <div style="font-size:12px;color:#9aa0a6;line-height:1.6">
+                                No hypotheses on the canvas yet.<br>
+                                Add <strong>WHAT IF</strong> nodes to track what you're testing.
+                            </div>`}
                     </div>
                 </div>`;
         }
