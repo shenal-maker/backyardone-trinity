@@ -1325,11 +1325,9 @@
         .link-chip { display:inline-flex; align-items:center; gap:4px; padding:4px 9px; border-radius:12px; background:#e8f0fe; color:#1a73e8; font-size:11px; font-weight:500; text-decoration:none; border:1px solid #c5d5f8; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
         .link-chip-x { background:none; border:none; color:#1a73e8; cursor:pointer; padding:0 0 0 2px; font-size:14px; line-height:1; opacity:.7; flex-shrink:0; }
         .link-chip-x:hover { opacity:1; }
-        .link-add-row { display:flex; gap:5px; margin-top:8px; }
-        .link-add-row input { flex:1; padding:7px 8px; border-radius:6px; border:1px solid var(--tv-border2); background:#fff; font-size:12px; font-family:inherit; outline:none; min-width:0; }
-        .link-add-row input:focus { border-color:#1a73e8; }
-        .link-add-row button { padding:7px 10px; background:#1a73e8; color:#fff; border:none; border-radius:6px; font-size:12px; cursor:pointer; white-space:nowrap; flex-shrink:0; }
-        .link-add-row button:hover { background:#1557b0; }
+        .link-paste-input { width:100%; padding:8px 10px; border-radius:6px; border:1px solid var(--tv-border2); background:#fff; font-size:12px; font-family:inherit; outline:none; box-sizing:border-box; margin-top:8px; color:var(--tv-text); }
+        .link-paste-input:focus { border-color:#1a73e8; }
+        .link-paste-input::placeholder { color:#9aa0a6; }
 
         /* ── Hypothesis scoreboard in sidebar ── */
         .sb-section { margin-top:14px; padding-top:14px; border-top:1px solid var(--tv-border); }
@@ -3488,12 +3486,10 @@
                 ).join('');
                 return `<div class="tdp-section">
                     <div class="tdp-section-label">Links</div>
-                    <div class="link-chips">${chipHtml||'<span style="font-size:11px;color:var(--tv-text-muted)">None yet</span>'}</div>
-                    <div class="link-add-row">
-                        <input id="linkLabelInput" type="text" placeholder="Label (optional)">
-                        <input id="linkUrlInput" type="url" placeholder="https://…">
-                        <button onclick="addNodeLink('${node.id}')">+ Add</button>
-                    </div>
+                    <div class="link-chips">${chipHtml||''}</div>
+                    <input class="link-paste-input" id="linkPasteInput" type="url" placeholder="Paste a link…"
+                        onkeydown="if(event.key==='Enter'){event.preventDefault();addNodeLink('${node.id}')}"
+                        onblur="addNodeLink('${node.id}')">
                 </div>`;
             }
 
@@ -3620,10 +3616,6 @@
                 <div class="tdp-editable tdp-oneliner" contenteditable="true" onblur="saveNodeField('${src.id}','oneliner',this)" style="margin-bottom:4px;min-height:20px" data-placeholder="Add a description…">${escapeHtml(src.oneliner||'')}</div>
                 ${typeSection}
                 ${linksSection(src)}
-                <div class="tdp-section">
-                    <div class="tdp-section-label">Notes</div>
-                    <textarea class="tdp-textarea" style="min-height:72px;font-size:13px" placeholder="Add a note…" onblur="saveQuickNote('${src.id}',this)">${escapeHtml(src._quickNote||'')}</textarea>
-                </div>
                 ${connItems.length ? `<div class="tdp-section tdp-connections">${connItems.join('<br>')}</div>` : ''}
                 <button class="tdp-delete-btn" onclick="deleteNode('${src.id}')">Delete node</button>
             `;
@@ -3748,13 +3740,18 @@
 
         // ── Links array ──
         function addNodeLink(nodeId) {
+            const input = document.getElementById('linkPasteInput');
+            if (!input) return;
+            const url = input.value.trim();
+            if (!url || !url.startsWith('http')) return;
             const node = [...cards, ...communities].find(x => x.id === nodeId);
             if (!node) return;
-            const label = (document.getElementById('linkLabelInput').value || '').trim();
-            const url = (document.getElementById('linkUrlInput').value || '').trim();
-            if (!url) { gToast('Enter a URL first'); return; }
+            let label;
+            try { label = new URL(url).hostname.replace(/^www\./, ''); } catch(e) { label = url.slice(0, 40); }
             if (!node.links) node.links = [];
-            node.links.push({ label: label || url, url });
+            // Avoid duplicates
+            if (node.links.find(l => l.url === url)) return;
+            node.links.push({ label, url });
             saveData();
             showTrinityDetail({ id: nodeId });
             gToast('Link added');
