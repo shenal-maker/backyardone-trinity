@@ -1329,6 +1329,19 @@
         .link-paste-input:focus { border-color:#1a73e8; }
         .link-paste-input::placeholder { color:#9aa0a6; }
 
+        /* ── Presence avatars ── */
+        #presenceBar { position:absolute; top:12px; right:12px; display:flex; flex-direction:row-reverse; align-items:center; gap:0; z-index:20; pointer-events:none; }
+        .presence-avatar { width:32px; height:32px; border-radius:50%; border:2px solid #fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; cursor:default; pointer-events:all; margin-left:-8px; box-shadow:0 1px 4px rgba(0,0,0,.18); transition:transform .15s; position:relative; flex-shrink:0; }
+        .presence-avatar:hover { transform:scale(1.15); z-index:2; }
+        .presence-avatar .pa-tooltip { position:absolute; top:calc(100% + 6px); right:0; background:#202124; color:#fff; font-size:11px; font-weight:500; padding:5px 9px; border-radius:6px; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .15s; box-shadow:0 2px 8px rgba(0,0,0,.25); }
+        .presence-avatar:hover .pa-tooltip { opacity:1; }
+
+        /* ── Name picker banner ── */
+        #namePicker { position:absolute; top:0; left:0; right:0; background:#fff; border-bottom:1px solid #dadce0; padding:10px 16px; display:flex; align-items:center; gap:10px; z-index:25; box-shadow:0 2px 6px rgba(0,0,0,.08); }
+        #namePicker span { font-size:13px; color:#5f6368; font-weight:500; white-space:nowrap; }
+        .np-btn { padding:6px 14px; border-radius:20px; border:1.5px solid #dadce0; background:#fff; font-size:12px; font-weight:600; cursor:pointer; transition:all .15s; color:#3c4043; }
+        .np-btn:hover { border-color:#1a73e8; color:#1a73e8; background:#e8f0fe; }
+
         /* ── Hypothesis scoreboard in sidebar ── */
         .sb-section { margin-top:14px; padding-top:14px; border-top:1px solid var(--tv-border); }
         .sb-title { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--tv-text-muted); margin-bottom:8px; }
@@ -1471,6 +1484,11 @@
             </div>
             <div class="trinity-graph-area">
                 <div id="trinityGraphContainer"></div>
+                <div id="presenceBar"></div>
+                <div id="namePicker" style="display:none">
+                    <span>Who are you?</span>
+                    <div style="display:flex;flex-wrap:wrap;gap:6px"></div>
+                </div>
                 <div class="trinity-detail-panel" id="trinityDetailPanel"></div>
             </div>
         </div>
@@ -3620,6 +3638,8 @@
                 <button class="tdp-delete-btn" onclick="deleteNode('${src.id}')">Delete node</button>
             `;
             panel.classList.add('open');
+            _currentOpenNode = src.name;
+            updatePresence(src.name);
         }
 
         function claimInterview(targetId) {
@@ -3819,6 +3839,8 @@
 
         function closeTrinityDetail() {
             document.getElementById('trinityDetailPanel').classList.remove('open');
+            _currentOpenNode = null;
+            updatePresence(null);
         }
 
         function closeTrinityEdgeTip() {
@@ -4457,11 +4479,97 @@
             }).catch(() => {});
         }
 
+        // ═══════════════════════════════════════
+        // PRESENCE — real-time "who's on canvas"
+        // ═══════════════════════════════════════
+        const PRESENCE_COLORS = ['#1a73e8','#34a853','#ea4335','#f9ab00','#7c5cbf','#00897b','#e91e63','#ff5722','#0288d1','#558b2f'];
+        const _sessionId = (() => {
+            let id = localStorage.getItem('b1SessionId');
+            if (!id) { id = Math.random().toString(36).slice(2,10) + Date.now().toString(36); localStorage.setItem('b1SessionId', id); }
+            return id;
+        })();
+        let _myName = localStorage.getItem('b1MyName') || null;
+        let _currentOpenNode = null;
+        let _presenceInterval = null;
+
+        function presenceColor(name) {
+            const i = TEAM_MEMBERS.indexOf(name);
+            return PRESENCE_COLORS[i >= 0 ? i : Math.abs([...name].reduce((a,c)=>a+c.charCodeAt(0),0)) % PRESENCE_COLORS.length];
+        }
+
+        function updatePresence(nodeOpen) {
+            if (!_myName || typeof db === 'undefined') return;
+            const data = { name: _myName, color: presenceColor(_myName), ts: Date.now(), nodeOpen: nodeOpen || null };
+            db.collection('backyardone_discovery').doc('presence')
+              .set({ [_sessionId]: data }, { merge: true })
+              .catch(() => {});
+        }
+
+        function removePresence() {
+            if (!_myName || typeof db === 'undefined') return;
+            const update = {};
+            update[_sessionId] = firebase.firestore.FieldValue.delete();
+            db.collection('backyardone_discovery').doc('presence').update(update).catch(() => {});
+        }
+
+        function subscribePresence() {
+            db.collection('backyardone_discovery').doc('presence').onSnapshot(snap => {
+                if (!snap.exists) return;
+                const now = Date.now();
+                const active = Object.entries(snap.data() || {})
+                    .filter(([sid, v]) => v && v.ts && (now - v.ts) < 90000 && sid !== _sessionId)
+                    .map(([, v]) => v);
+                renderPresence(active);
+            });
+        }
+
+        function renderPresence(users) {
+            const bar = document.getElementById('presenceBar');
+            if (!bar) return;
+            bar.innerHTML = users.map(u => {
+                const initial = (u.name || '?').charAt(0).toUpperCase();
+                const tip = u.nodeOpen ? `${u.name} — ${u.nodeOpen}` : u.name;
+                return `<div class="presence-avatar" style="background:${u.color}">${initial}<span class="pa-tooltip">${escapeHtml(tip)}</span></div>`;
+            }).join('');
+        }
+
+        function initPresence() {
+            if (_myName) {
+                startPresence();
+            } else {
+                const picker = document.getElementById('namePicker');
+                const btnRow = picker.querySelector('div');
+                btnRow.innerHTML = TEAM_MEMBERS.map(n =>
+                    `<button class="np-btn" onclick="chooseName('${n}')">${n}</button>`
+                ).join('');
+                picker.style.display = 'flex';
+            }
+        }
+
+        function chooseName(name) {
+            _myName = name;
+            localStorage.setItem('b1MyName', name);
+            document.getElementById('namePicker').style.display = 'none';
+            startPresence();
+        }
+
+        function startPresence() {
+            updatePresence(null);
+            subscribePresence();
+            _presenceInterval = setInterval(() => updatePresence(_currentOpenNode), 25000);
+            window.addEventListener('beforeunload', removePresence);
+            window.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'hidden') removePresence();
+                else updatePresence(_currentOpenNode);
+            });
+        }
+
         // Load on page ready — open directly on Trinity graph
         applyTrinityThemeClass();
         switchView('trinity');
         loadData();
         initSpeech();
+        setTimeout(initPresence, 800); // slight delay so Firestore is ready
 
         // Register service worker for PWA
         if ('serviceWorker' in navigator) {
