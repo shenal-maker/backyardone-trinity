@@ -1330,17 +1330,20 @@
         .link-paste-input::placeholder { color:#9aa0a6; }
 
         /* ── Presence avatars ── */
-        #presenceBar { position:absolute; top:12px; right:12px; display:flex; flex-direction:row-reverse; align-items:center; gap:0; z-index:20; pointer-events:none; }
-        .presence-avatar { width:32px; height:32px; border-radius:50%; border:2px solid #fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; cursor:default; pointer-events:all; margin-left:-8px; box-shadow:0 1px 4px rgba(0,0,0,.18); transition:transform .15s; position:relative; flex-shrink:0; }
-        .presence-avatar:hover { transform:scale(1.15); z-index:2; }
-        .presence-avatar .pa-tooltip { position:absolute; top:calc(100% + 6px); right:0; background:#202124; color:#fff; font-size:11px; font-weight:500; padding:5px 9px; border-radius:6px; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .15s; box-shadow:0 2px 8px rgba(0,0,0,.25); }
+        #presenceBar { position:absolute; top:12px; right:12px; display:flex; flex-direction:row-reverse; align-items:center; z-index:20; pointer-events:none; }
+        .presence-avatar { width:32px; height:32px; border-radius:50%; border:2.5px solid #fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; cursor:default; pointer-events:all; margin-left:-8px; box-shadow:0 1px 4px rgba(0,0,0,.2); transition:transform .15s,box-shadow .15s; position:relative; flex-shrink:0; }
+        .presence-avatar:hover { transform:scale(1.15); z-index:5; box-shadow:0 2px 8px rgba(0,0,0,.25); }
+        .presence-avatar.is-me { border-color:#fff; box-shadow:0 0 0 2.5px currentColor, 0 1px 5px rgba(0,0,0,.2); cursor:pointer; }
+        .presence-avatar .pa-tooltip { position:absolute; top:calc(100% + 7px); right:0; background:#202124; color:#fff; font-size:11px; font-weight:500; padding:5px 10px; border-radius:6px; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .15s; box-shadow:0 2px 8px rgba(0,0,0,.28); }
         .presence-avatar:hover .pa-tooltip { opacity:1; }
 
-        /* ── Name picker banner ── */
-        #namePicker { position:absolute; top:0; left:0; right:0; background:#fff; border-bottom:1px solid #dadce0; padding:10px 16px; display:flex; align-items:center; gap:10px; z-index:25; box-shadow:0 2px 6px rgba(0,0,0,.08); }
-        #namePicker span { font-size:13px; color:#5f6368; font-weight:500; white-space:nowrap; }
+        /* ── Name picker dropdown (triggered from avatar) ── */
+        #namePicker { position:absolute; top:52px; right:12px; background:#fff; border:1px solid #dadce0; border-radius:12px; padding:14px 16px; display:none; flex-direction:column; gap:10px; z-index:30; box-shadow:0 4px 16px rgba(0,0,0,.14); min-width:200px; }
+        #namePicker .np-label { font-size:12px; color:#5f6368; font-weight:500; }
+        #namePicker .np-grid { display:flex; flex-wrap:wrap; gap:6px; }
         .np-btn { padding:6px 14px; border-radius:20px; border:1.5px solid #dadce0; background:#fff; font-size:12px; font-weight:600; cursor:pointer; transition:all .15s; color:#3c4043; }
         .np-btn:hover { border-color:#1a73e8; color:#1a73e8; background:#e8f0fe; }
+        .np-btn.active { background:#1a73e8; border-color:#1a73e8; color:#fff; }
 
         /* ── Hypothesis scoreboard in sidebar ── */
         .sb-section { margin-top:14px; padding-top:14px; border-top:1px solid var(--tv-border); }
@@ -1485,9 +1488,9 @@
             <div class="trinity-graph-area">
                 <div id="trinityGraphContainer"></div>
                 <div id="presenceBar"></div>
-                <div id="namePicker" style="display:none">
-                    <span>Who are you?</span>
-                    <div style="display:flex;flex-wrap:wrap;gap:6px"></div>
+                <div id="namePicker">
+                    <div class="np-label">Who are you?</div>
+                    <div class="np-grid"></div>
                 </div>
                 <div class="trinity-detail-panel" id="trinityDetailPanel"></div>
             </div>
@@ -4490,7 +4493,8 @@
         })();
         let _myName = localStorage.getItem('b1MyName') || null;
         let _currentOpenNode = null;
-        let _presenceInterval = null;
+        let _presenceStarted = false;
+        let _namePickerOpen = false;
 
         function presenceColor(name) {
             const i = TEAM_MEMBERS.indexOf(name);
@@ -4499,9 +4503,9 @@
 
         function updatePresence(nodeOpen) {
             if (!_myName || typeof db === 'undefined') return;
-            const data = { name: _myName, color: presenceColor(_myName), ts: Date.now(), nodeOpen: nodeOpen || null };
+            const color = presenceColor(_myName);
             db.collection('backyardone_discovery').doc('presence')
-              .set({ [_sessionId]: data }, { merge: true })
+              .set({ [_sessionId]: { name: _myName, color, ts: Date.now(), nodeOpen: nodeOpen || null } }, { merge: true })
               .catch(() => {});
         }
 
@@ -4514,35 +4518,58 @@
 
         function subscribePresence() {
             db.collection('backyardone_discovery').doc('presence').onSnapshot(snap => {
-                if (!snap.exists) return;
                 const now = Date.now();
-                const active = Object.entries(snap.data() || {})
+                const data = snap.exists ? snap.data() || {} : {};
+                const others = Object.entries(data)
                     .filter(([sid, v]) => v && v.ts && (now - v.ts) < 90000 && sid !== _sessionId)
                     .map(([, v]) => v);
-                renderPresence(active);
+                renderPresence(others);
             });
         }
 
-        function renderPresence(users) {
+        function renderPresence(others) {
             const bar = document.getElementById('presenceBar');
             if (!bar) return;
-            bar.innerHTML = users.map(u => {
-                const initial = (u.name || '?').charAt(0).toUpperCase();
-                const tip = u.nodeOpen ? `${u.name} — ${u.nodeOpen}` : u.name;
-                return `<div class="presence-avatar" style="background:${u.color}">${initial}<span class="pa-tooltip">${escapeHtml(tip)}</span></div>`;
+            // Others first (row-reverse makes rightmost = first in DOM)
+            const othersHtml = others.map(u => {
+                const tip = u.nodeOpen ? `${escapeHtml(u.name)} — ${escapeHtml(u.nodeOpen)}` : escapeHtml(u.name);
+                return `<div class="presence-avatar" style="background:${u.color}">${u.name.charAt(0).toUpperCase()}<span class="pa-tooltip">${tip}</span></div>`;
             }).join('');
+            // Self avatar — always present, clickable to switch name
+            const meColor = _myName ? presenceColor(_myName) : '#bdc1c6';
+            const meInitial = _myName ? _myName.charAt(0).toUpperCase() : '?';
+            const meTip = _myName ? `You (${escapeHtml(_myName)}) — click to switch` : 'Click to set your name';
+            const meHtml = `<div class="presence-avatar is-me" style="background:${meColor};color:${meColor};border-color:#fff" onclick="toggleNamePicker()" title="">
+                <span style="color:#fff">${meInitial}</span>
+                <span class="pa-tooltip">${meTip}</span>
+            </div>`;
+            bar.innerHTML = othersHtml + meHtml;
         }
 
-        function initPresence() {
-            if (_myName) {
-                startPresence();
-            } else {
-                const picker = document.getElementById('namePicker');
-                const btnRow = picker.querySelector('div');
-                btnRow.innerHTML = TEAM_MEMBERS.map(n =>
-                    `<button class="np-btn" onclick="chooseName('${n}')">${n}</button>`
-                ).join('');
-                picker.style.display = 'flex';
+        function buildNamePicker() {
+            const grid = document.querySelector('#namePicker .np-grid');
+            if (!grid) return;
+            grid.innerHTML = TEAM_MEMBERS.map(n =>
+                `<button class="np-btn${n === _myName ? ' active' : ''}" onclick="chooseName('${n}')">${n}</button>`
+            ).join('');
+        }
+
+        function toggleNamePicker() {
+            const picker = document.getElementById('namePicker');
+            _namePickerOpen = !_namePickerOpen;
+            buildNamePicker();
+            picker.style.display = _namePickerOpen ? 'flex' : 'none';
+            if (_namePickerOpen) {
+                // Close on outside click
+                setTimeout(() => document.addEventListener('click', closePickerOnOutside, { once: true }), 0);
+            }
+        }
+
+        function closePickerOnOutside(e) {
+            const picker = document.getElementById('namePicker');
+            if (picker && !picker.contains(e.target)) {
+                picker.style.display = 'none';
+                _namePickerOpen = false;
             }
         }
 
@@ -4550,17 +4577,28 @@
             _myName = name;
             localStorage.setItem('b1MyName', name);
             document.getElementById('namePicker').style.display = 'none';
-            startPresence();
+            _namePickerOpen = false;
+            updatePresence(_currentOpenNode);
+            renderPresence([]); // re-render self immediately; snapshot will fill others
+            if (!_presenceStarted) startPresence();
+        }
+
+        function initPresence() {
+            renderPresence([]); // always render self avatar immediately
+            if (_myName) startPresence();
+            else toggleNamePicker(); // open picker on first visit
         }
 
         function startPresence() {
+            if (_presenceStarted) return;
+            _presenceStarted = true;
             updatePresence(null);
             subscribePresence();
-            _presenceInterval = setInterval(() => updatePresence(_currentOpenNode), 25000);
+            setInterval(() => updatePresence(_currentOpenNode), 25000);
             window.addEventListener('beforeunload', removePresence);
             window.addEventListener('visibilitychange', () => {
                 if (document.visibilityState === 'hidden') removePresence();
-                else updatePresence(_currentOpenNode);
+                else { updatePresence(_currentOpenNode); }
             });
         }
 
