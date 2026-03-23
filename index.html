@@ -4536,11 +4536,14 @@
         // ═══════════════════════════════════════
         function switchTab(tab) {
             const isCanvas = tab === 'canvas';
-            document.getElementById('trinityGraphArea').style.display = isCanvas ? '' : 'none';
-            document.getElementById('dashboardView').style.display = isCanvas ? 'none' : '';
-            document.getElementById('legendContent').style.display = isCanvas ? '' : 'none';
+            document.getElementById('trinityGraphArea').style.display = isCanvas ? 'flex' : 'none';
+            document.getElementById('dashboardView').style.display = isCanvas ? 'none' : 'block';
+            document.getElementById('legendContent').style.display = isCanvas ? 'block' : 'none';
             document.getElementById('tabCanvas').classList.toggle('active', isCanvas);
             document.getElementById('tabDashboard').classList.toggle('active', !isCanvas);
+            if (isCanvas && _trinityNetwork) {
+                setTimeout(() => { _trinityNetwork.redraw(); _trinityNetwork.fit(); }, 50);
+            }
             if (!isCanvas) renderDashboard();
         }
 
@@ -4725,67 +4728,52 @@
             const bar = document.getElementById('presenceBar');
             if (!bar) return;
             const othersHtml = others.map(u => {
-                const tip = u.nodeOpen ? `${escapeHtml(u.name)} — ${escapeHtml(u.nodeOpen)}` : escapeHtml(u.name);
+                const tip = u.nodeOpen ? `${escapeHtml(u.name)} — viewing ${escapeHtml(u.nodeOpen)}` : escapeHtml(u.name);
                 return `<div class="presence-avatar" style="background:${u.color}">${u.name.charAt(0).toUpperCase()}<span class="pa-tooltip">${tip}</span></div>`;
             }).join('');
             const myName = _currentUser?.displayName;
             const meColor = myName ? presenceColor(myName) : '#bdc1c6';
             const meInitial = myName ? myName.charAt(0).toUpperCase() : '?';
-            const meTip = myName ? `You (${escapeHtml(myName)}) — click to switch` : 'Click to set your name';
-            const meHtml = `<div class="presence-avatar is-me" style="background:${meColor}" onclick="toggleNamePicker()">
-                <span style="color:#fff">${meInitial}</span>
-                <span class="pa-tooltip">${meTip}</span>
+            // Name is locked once set — no clicking to switch
+            const meTip = myName ? `You · ${escapeHtml(myName)}` : 'Setting your name…';
+            const meHtml = `<div class="presence-avatar is-me" style="background:${meColor}">
+                ${meInitial}<span class="pa-tooltip">${meTip}</span>
             </div>`;
             bar.innerHTML = othersHtml + meHtml;
         }
 
-        function buildNamePicker() {
-            const grid = document.querySelector('#namePicker .np-grid');
-            if (!grid) return;
-            const myName = _currentUser?.displayName;
+        function showNamePicker() {
+            const picker = document.getElementById('namePicker');
+            const grid = picker.querySelector('.np-grid');
             grid.innerHTML = TEAM_MEMBERS.map(n =>
-                `<button class="np-btn${n === myName ? ' active' : ''}" onclick="chooseName('${n}')">${n}</button>`
+                `<button class="np-btn" onclick="chooseName('${n}')">${n}</button>`
             ).join('');
+            picker.style.display = 'flex';
         }
 
-        function toggleNamePicker() {
-            const picker = document.getElementById('namePicker');
-            _namePickerOpen = !_namePickerOpen;
-            buildNamePicker();
-            picker.style.display = _namePickerOpen ? 'flex' : 'none';
-            if (_namePickerOpen) {
-                setTimeout(() => document.addEventListener('click', closePickerOnOutside, { once: true }), 0);
-            }
-        }
-
-        function closePickerOnOutside(e) {
-            const picker = document.getElementById('namePicker');
-            if (picker && !picker.contains(e.target)) {
-                picker.style.display = 'none';
-                _namePickerOpen = false;
-            }
-        }
+        // toggleNamePicker kept as no-op so old references don't crash
+        function toggleNamePicker() { if (!_currentUser?.displayName) showNamePicker(); }
 
         function chooseName(name) {
             if (!_currentUser) return;
-            document.getElementById('namePicker').style.display = 'none';
-            _namePickerOpen = false;
+            const picker = document.getElementById('namePicker');
+            picker.style.display = 'none';
             _currentUser.updateProfile({ displayName: name }).then(() => {
                 renderPresence([]);
                 if (!_presenceStarted) startPresence();
-                else { updatePresence(_currentOpenNode); subscribePresence(); }
+                else updatePresence(_currentOpenNode);
             }).catch(e => console.warn('updateProfile failed', e));
         }
 
         function initPresence() {
-            // Sign in anonymously — Firebase gives each device a stable UID
-            auth.signInAnonymously().catch(e => console.warn('Auth failed', e));
+            auth.signInAnonymously().catch(e => console.warn('Anon auth failed', e));
             auth.onAuthStateChanged(user => {
                 if (!user) return;
                 _currentUser = user;
-                renderPresence([]); // show self avatar immediately
+                // Auth is confirmed — safe to load data now
+                loadData();
+                renderPresence([]);
                 if (!user.displayName) {
-                    // First time on this device — show name picker
                     toggleNamePicker();
                 } else {
                     startPresence();
@@ -4806,12 +4794,11 @@
             });
         }
 
-        // Load on page ready — open directly on Trinity graph
+        // Load on page ready
         applyTrinityThemeClass();
         switchView('trinity');
-        loadData();
         initSpeech();
-        setTimeout(initPresence, 800); // slight delay so Firestore is ready
+        initPresence(); // loadData() called inside once auth resolves
 
         // Register service worker for PWA
         if ('serviceWorker' in navigator) {
