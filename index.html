@@ -1477,20 +1477,6 @@
         <div class="field-notes-view" id="fieldNotesView" style="display:none"><div id="fnList"></div></div>
 
 
-        <!-- JSON paste modal (Trinity) -->
-        <div id="jsonPasteModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;align-items:center;justify-content:center;">
-            <div onclick="event.stopPropagation()" style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px;width:520px;max-width:90vw;display:flex;flex-direction:column;max-height:90vh;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-                    <span style="font-family:var(--font-hand);font-size:20px">Paste JSON</span>
-                    <button onclick="closeJsonPaste()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted)">&times;</button>
-                </div>
-                <textarea id="jsonPasteArea" placeholder='{"cards":[...],"connections":[...]}' style="width:100%;flex:1;min-height:120px;max-height:55vh;font-family:monospace;font-size:12px;padding:12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-secondary);color:var(--text-primary);resize:vertical;box-sizing:border-box"></textarea>
-                <div style="display:flex;gap:10px;margin-top:12px;justify-content:flex-end;flex-shrink:0">
-                    <button class="btn btn-cancel" onclick="closeJsonPaste()">Cancel</button>
-                    <button class="btn btn-save" onclick="importJsonPaste()">Import</button>
-                </div>
-            </div>
-        </div>
 
         <div class="trinity-view" id="trinityView">
             <div class="trinity-legend">
@@ -1521,8 +1507,7 @@
                 <button class="btn" onclick="openModal('WHO')" style="margin-bottom:6px">+ Add Target</button>
                 <button id="connectModeBtn" class="btn btn-connect" onclick="toggleConnectMode()" style="margin-bottom:6px">Connect nodes</button>
                 <button class="btn btn-secondary" onclick="exportGraphJSON()" style="margin-bottom:4px;font-size:11px">Export JSON</button>
-                <button class="btn btn-secondary" onclick="openJsonPaste()" style="font-size:11px">Import JSON</button>
-                <div class="tl-hint">Click → details<br>Double-click → rename<br>Drag → move<br>Connect → draw edges</div>
+                <div class="tl-hint">Click → details<br>Drag → move<br>Connect → click two nodes<br>Delete → select + ⌫</div>
                 <div class="sb-section">
                     <div class="sb-title">Hypothesis Scoreboard</div>
                     <div id="scoreboard"></div>
@@ -1563,13 +1548,6 @@
                         <input type="text" id="cardOneliner" placeholder="Brief description or context...">
                     </div>
 
-                    <div class="form-group" id="photoUploadGroup" style="display:none">
-                        <label>Profile Photo</label>
-                        <div style="display:flex;align-items:center;gap:12px;">
-                            <div id="photoPreview" style="width:60px;height:60px;min-width:60px;min-height:60px;border-radius:50%;background:var(--bg-secondary);border:1px dashed var(--border);background-size:cover;background-position:center;aspect-ratio:1/1;"></div>
-                            <input type="file" id="photoInput" accept="image/*" onchange="handlePhotoUpload(event)" style="font-size:13px;">
-                        </div>
-                    </div>
                     <div id="trinityStateRow" style="display:none; margin-bottom:12px;">
                         <label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:6px;">Trinity State — how do you relate to this community?</label>
                         <div style="display:flex;gap:8px;">
@@ -2163,16 +2141,6 @@
 
         let currentPhoto = null;
 
-        function handlePhotoUpload(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                currentPhoto = ev.target.result;
-                document.getElementById('photoPreview').style.backgroundImage = `url(${currentPhoto})`;
-            };
-            reader.readAsDataURL(file);
-        }
 
         // Open modal
         function openModal(type, cardId = null) {
@@ -2187,9 +2155,6 @@
             currentBlocks = [];
             currentPhoto = null;
             currentTrinityState = 'WHO';
-            document.getElementById('photoPreview').style.backgroundImage = '';
-            document.getElementById('photoInput').value = '';
-            document.getElementById('photoUploadGroup').style.display = (type === 'person' || type === 'WHO') ? 'block' : 'none';
             document.getElementById('situationFieldsRow').style.display = (type === 'situation' || type === 'SITUATION') ? 'flex' : 'none';
             document.getElementById('trinityStateRow').style.display = type === 'COMMUNITY' ? 'block' : 'none';
             currentEmotions = {};
@@ -2205,10 +2170,6 @@
                     document.getElementById('cardName').value = card.name || '';
                     document.getElementById('cardOneliner').value = card.oneliner || '';
                     currentBlocks = card.blocks ? JSON.parse(JSON.stringify(card.blocks)) : [];
-                    if (card.photo) {
-                        currentPhoto = card.photo;
-                        document.getElementById('photoPreview').style.backgroundImage = `url(${card.photo})`;
-                    }
                     if (card.emotions) {
                         currentEmotions = Array.isArray(card.emotions)
                             ? Object.fromEntries(card.emotions.map(e => [e, 1]))
@@ -3762,17 +3723,18 @@
         }
 
         let _connectMode = false;
+        let _connectFromId = null;
         function toggleConnectMode() {
             _connectMode = !_connectMode;
+            _connectFromId = null;
             const btn = document.getElementById('connectModeBtn');
             if (_connectMode) {
                 btn.classList.add('active');
                 btn.textContent = 'Cancel connect';
-                _trinityNetwork.addEdgeMode();
+                gToast('Click the first node, then the second to connect them');
             } else {
                 btn.classList.remove('active');
                 btn.textContent = 'Connect nodes';
-                _trinityNetwork.disableEditMode();
             }
         }
 
@@ -4418,39 +4380,39 @@
                 layout: {
                     improvedLayout: true,
                 },
-                manipulation: {
-                    enabled: false,
-                    addEdge: (data, callback) => {
-                        if (data.from === data.to) return;
-                        const id = 'edge-' + Date.now();
-                        connections.push({ id, fromId: data.from, toId: data.to, edgeLabel: 'CONNECTS', bidirectional: false });
-                        saveData();
-                        callback(data);
-                        _connectMode = false;
-                        const btn = document.getElementById('connectModeBtn');
-                        if (btn) { btn.classList.remove('active'); btn.textContent = 'Connect nodes'; }
-                        gToast('Edge added');
-                    },
-                    deleteNode: (data, callback) => {
-                        data.nodes.forEach(id => {
-                            cards = cards.filter(x => x.id !== id);
-                            communities = communities.filter(x => x.id !== id);
-                            connections = connections.filter(x => x.fromId !== id && x.toId !== id);
-                        });
-                        data.edges.forEach(id => { connections = connections.filter(x => x.id !== id); });
-                        saveData(); callback(data); closeTrinityDetail(); gToast('Deleted');
-                    },
-                    deleteEdge: (data, callback) => {
-                        data.edges.forEach(id => { connections = connections.filter(x => x.id !== id); });
-                        saveData(); callback(data); gToast('Edge removed');
-                    },
-                },
+                manipulation: { enabled: false },
             };
 
             _trinityNetwork = new vis.Network(container, data, options);
 
             _trinityNetwork.on('click', params => {
                 closeTrinityEdgeTip();
+                // 2-click connect mode
+                if (_connectMode) {
+                    if (params.nodes.length > 0) {
+                        const clicked = params.nodes[0];
+                        if (!_connectFromId) {
+                            _connectFromId = clicked;
+                            _trinityNetwork.selectNodes([clicked]);
+                            gToast('Now click the destination node');
+                        } else if (_connectFromId !== clicked) {
+                            const id = 'edge-' + Date.now();
+                            connections.push({ id, fromId: _connectFromId, toId: clicked, edgeLabel: 'CONNECTS', bidirectional: false });
+                            saveData();
+                            renderTrinityGraph();
+                            gToast('Connected');
+                            _connectFromId = null;
+                            _connectMode = false;
+                            const btn = document.getElementById('connectModeBtn');
+                            if (btn) { btn.classList.remove('active'); btn.textContent = 'Connect nodes'; }
+                        }
+                    } else {
+                        // clicked background — cancel first selection
+                        _connectFromId = null;
+                        _trinityNetwork.unselectAll();
+                    }
+                    return;
+                }
                 if (params.nodes.length > 0) {
                     showTrinityDetail({ id: params.nodes[0] });
                 } else if (params.edges.length > 0) {
@@ -4488,34 +4450,6 @@
             });
         }
 
-        function openJsonPaste() {
-            const m = document.getElementById('jsonPasteModal');
-            m.style.display = 'flex';
-        }
-        function closeJsonPaste() {
-            document.getElementById('jsonPasteModal').style.display = 'none';
-            document.getElementById('jsonPasteArea').value = '';
-        }
-        function importJsonPaste() {
-            try {
-                const raw = document.getElementById('jsonPasteArea').value.trim();
-                const data = JSON.parse(raw);
-                if (data.cards) {
-                    data.cards.forEach(c => { if (!cards.find(x => x.id === c.id)) cards.push(c); });
-                }
-                if (data.communities) {
-                    data.communities.forEach(c => { if (!communities.find(x => x.id === c.id)) communities.push(c); });
-                }
-                if (data.connections) {
-                    data.connections.forEach(c => { if (!connections.find(x => x.id === c.id)) connections.push(c); });
-                }
-                saveData();
-                closeJsonPaste();
-                renderTrinityGraph();
-            } catch(e) {
-                alert('Invalid JSON — check the format and try again.');
-            }
-        }
 
         // Seed Trinity sample data if app is empty
         function seedTrinityData() {
